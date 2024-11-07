@@ -31,25 +31,11 @@
     <nav>
         <div class="container">
             <ul>
-                <li><a href="#" onclick="showContent('crear-ticket')">Crear Nuevo Ticket</a></li>
+                <li><a href="crearTickets.php">Crear Nuevo Ticket</a></li>
                 <li><a href="#" onclick="showContent('mis-tickets')">Mis Tickets</a></li>
             </ul>
         </div>
     </nav>
-
-    <div class="container">
-        <div id="crear-ticket" class="content">
-            <h2>Crear Nuevo Ticket</h2>
-            <form action="#" method="POST">
-                <label for="asunto">Asunto:</label>
-                <input type="text" id="asunto" name="asunto" required><br><br>
-                
-                <label for="descripcion">Descripción:</label><br>
-                <textarea id="descripcion" name="descripcion" rows="4" cols="50" required></textarea><br><br>
-                
-                <input type="submit" value="Crear Ticket">
-            </form>
-        </div>
 
         <div id="mis-tickets" class="content hidden">
             <h2>Mis Tickets</h2>
@@ -70,7 +56,7 @@
 
         // Mostrar la sección de "Crear Nuevo Ticket" por defecto al cargar la página
         document.addEventListener("DOMContentLoaded", function() {
-          showContent('crear-ticket');
+          showContent('mis-tickets');
         });
     </script>
 </body>
