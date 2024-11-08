@@ -83,6 +83,7 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
                         <th>Prioridad</th>
                         <th>Fecha de Creación</th>
                         <th>Fecha de Actualización</th>
+                        <th>Detalles</th>
                     </tr>
                     <?php foreach ($tickets as $ticket): ?>
                         <tr>
@@ -93,6 +94,7 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
                             <td><?php echo htmlspecialchars($ticket['prioridad']); ?></td>
                             <td><?php echo htmlspecialchars($ticket['fecha_creacion']); ?></td>
                             <td><?php echo htmlspecialchars($ticket['fecha_actualizacion']); ?></td>
+                            <td><a href='detalleTicketTecnico.php?id="<?php echo htmlspecialchars($ticket['id']);?>"'>Ver detalles</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
