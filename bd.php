@@ -10,7 +10,7 @@ function comprobar_usuario($nombre, $clave)
 	);
 
 	// Creo la sentencia SQL y ejecuto	
-	$ins = "select email, contraseña from usuarios where email = '$nombre' 
+	$ins = "select * from usuarios where email = '$nombre' 
 			and contraseña = '$clave'";
 	$resul = $bd->query($ins);
 	if ($resul->rowCount() === 1) {
