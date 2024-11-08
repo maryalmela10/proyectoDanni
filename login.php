@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			// Le mando a la página principal
 			header("Location: DprincipalSesiones.php");
 		} else {
-			header("Location: baseDatosEjercicio5Admin.php");
+			header("Location: paginaTecnico.php");
 		}
 	}	
 }
