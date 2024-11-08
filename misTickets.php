@@ -1,7 +1,7 @@
 <?php
     // Incluye el archivo con las funciones
     require_once 'bd.php';
-    session_start();
+    //session_start();
     if(isset($_SESSION["logueado"])) {
         if(isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "0") {
             // Obtener el ID del usuario desde la sesión        
