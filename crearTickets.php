@@ -3,19 +3,19 @@ require_once 'bd.php';
 session_start();
 $mensaje = '';
 // Voy a ver si el usuario se ha logueado
-$err = false;
-if(isset($_SESSION["logueado"])) {
-    if(isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "0") {
+$err = false;  
+if(isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "0") {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {  
             if(isset($_POST["asunto"]) && isset($_POST["descripcion"]) && !empty($_POST["asunto"]) && !empty($_POST["descripcion"])){
                 $id = (int)$_SESSION['id'];
                 $resultado = crearTicket($id,$_POST["descripcion"],$_POST["asunto"]);
                 if($resultado) {
-                    $mensaje = "Ticket creado exitosamente.";
+                    header("Location: ticketCreado.php");
                 } else {
                     $err = true;
                     $mensaje = "Error al crear el ticket.";
                 } 
-            }
+            }}
         ?><!DOCTYPE html>
         <html lang="es">
         <head>
@@ -90,7 +90,6 @@ if(isset($_SESSION["logueado"])) {
                 <?php if ($mensaje): ?>
                 <div class="mensaje <?php echo $err ? 'error' : 'exito'; ?>">
                 <?php echo $mensaje; 
-                $mensaje = " ";
                 ?>
                 </div>
             <?php endif; ?>
@@ -98,10 +97,6 @@ if(isset($_SESSION["logueado"])) {
         </body>
         </html>
         <?php
-        
-    } else {
-        echo "No perteneces aquí";
-    }
 } else {
     // Le mando al loguin
     header("Location: login.php");

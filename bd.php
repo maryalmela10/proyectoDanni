@@ -75,9 +75,6 @@ function empleadoTickets($id_usu){
 		// Esto te ayudará a ver lo que se está devolviendo
 		//var_dump($tickets);  
 		//return $tickets;
-		
-	
-	
 		// Devuelve los tickets
 		return $tickets;
 		
