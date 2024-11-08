@@ -38,13 +38,21 @@ function crearTicket($id_usu, $descr, $asunto)
 		return FALSE;
 	}
 
-	// Creo la sentencia SQL y ejecuto	
-	$fecha_hora_actual = '"' . date("Y-m-d H:i:s") . '"';
-	$descr = "'" . $descr . "'";
-	$asunto = "'" . $asunto . "'";
-	$ins = "insert into tickets (fecha_creacion,fecha_actualizacion,id_usu,descripcion,asunto) VALUES ($fecha_hora_actual,$fecha_hora_actual,$id_usu,$descr,$asunto)";
-	$resul = $bd->query($ins);
-	if ($resul->rowCount() === 1) {
+	// Preparar la sentencia SQL para insertar el ticket
+	$stmt = $bd->prepare("INSERT INTO tickets (fecha_creacion, fecha_actualizacion, id_usu, descripcion, asunto) VALUES (:fecha_creacion, :fecha_actualizacion, :id_usu, :descr, :asunto)");
+
+	$fecha_actual = date("Y-m-d H:i:s");
+
+	// Ejecutar la sentencia preparada
+	$stmt->execute([
+		':fecha_creacion' => $fecha_actual,
+		':fecha_actualizacion' => $fecha_actual,
+		':id_usu' => $id_usu,
+		':descr' => $descr,
+		':asunto' => $asunto
+	]);
+
+	if ($stmt->rowCount() === 1) {
 		return $bd->lastInsertId(); // Devuelve el ID del ticket insertado
 	} else {
 		return FALSE;
@@ -77,19 +85,8 @@ function empleadoTickets($id_usu)
 	//var_dump($tickets);  
 	//return $tickets;
 
-
-
 	// Devuelve los tickets
 	return $tickets;
-
-		// Devuelve todos los tickets en un array asociativo
-		$tickets =  $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-		// Esto te ayudará a ver lo que se está devolviendo
-		//var_dump($tickets);  
-		//return $tickets;
-		// Devuelve los tickets
-		return $tickets;
 }
 
 function obtenerTicket($id){
@@ -142,9 +139,6 @@ function tecnicoTickets()
 	// Esto te ayudará a ver lo que se está devolviendo
 	//var_dump($tickets);  
 	//return $tickets;
-
-
-
 	// Devuelve los tickets
 	return $tickets;
 
