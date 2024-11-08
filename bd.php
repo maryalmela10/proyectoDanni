@@ -52,6 +52,39 @@ function crearTicket($id_usu, $descr, $asunto)
 }
 
 
+function empleadoTickets($id_usu){
+										// Incluyo los parámetros de conexión y creo el objeto PDO
+	   // Conexión a la base de datos incluyendo los datos 
+	   include "configuracion_bd.php";
+	   $bd = new PDO(
+		   "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		   $bd_config["usuario"],
+		   $bd_config["clave"]
+	   );
+	   // Consulta SQL para seleccionar los tickets del usuario, ordenados por fecha de creación
+	   $query = "SELECT id, asunto, estado, fecha_creacion 
+	   				FROM tickets WHERE id_usu = :id_usu ORDER BY
+					 fecha_creacion DESC";
+		//sentencia para ejecutarla de forma segura
+		$stmt = $bd->prepare($query);
+		//la consulta con el ID del usuario como parámetro
+    	$stmt->execute([':id_usu' =>$id_usu]);
+
+		// Devuelve todos los tickets en un array asociativo
+		$tickets =  $stmt->fetchAll(PDO::FETCH_ASSOC);
+		// Esto te ayudará a ver lo que se está devolviendo
+		//var_dump($tickets);  
+		//return $tickets;
+		
+	
+	
+		// Devuelve los tickets
+		return $tickets;
+		
+}
+
+
+
 function cargar_categorias()
 {
 	// Incluyo los parámetros de conexión y creo el objeto PDO
