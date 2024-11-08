@@ -1,3 +1,15 @@
+<?php
+    session_start();
+    if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
+        header("Location: login.php");
+        exit();
+    }
+
+    if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        if(isset($_GET['id']) && !empty($_GET['id'])){
+            
+        }
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -84,7 +96,7 @@
             <h3>Mensajes</h3>
             <?php
             // Aquí deberías obtener y mostrar los mensajes asociados al ticket
-            $mensajes = obtenerMensajesTicket($ticketId); // Implementa esta función en bd.php
+            $mensajes = obtenerTicket($ticketId); // Implementa esta función en bd.php
             if ($mensajes) {
                 foreach ($mensajes as $mensaje) {
                     echo "<div class='message'>";
@@ -102,3 +114,5 @@
     </div>
 </body>
 </html>
+<?php
+      } 
