@@ -14,7 +14,8 @@ if(isset($_SESSION["logueado"])) {
                 } else {
                     $err = true;
                     $mensaje = "Error al crear el ticket.";
-                } }
+                } 
+            }
         ?><!DOCTYPE html>
         <html lang="es">
         <head>
