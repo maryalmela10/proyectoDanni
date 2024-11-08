@@ -89,7 +89,9 @@ if(isset($_SESSION["logueado"])) {
                 </form>
                 <?php if ($mensaje): ?>
                 <div class="mensaje <?php echo $err ? 'error' : 'exito'; ?>">
-                <?php echo $mensaje; ?>
+                <?php echo $mensaje; 
+                $mensaje = " ";
+                ?>
                 </div>
             <?php endif; ?>
             </div>
