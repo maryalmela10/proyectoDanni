@@ -72,7 +72,7 @@
                     echo "<td>" . htmlspecialchars($ticket['asunto']) . "</td>";
                     echo "<td>" . htmlspecialchars($ticket['estado']) . "</td>";
                     echo "<td>" . htmlspecialchars($ticket['fecha_creacion']) . "</td>";
-                    echo "<td><a href='detalleTicket.php?id=" . $ticket['id'] . "'>Ver detalles</a></td>";
+                    echo "<td><a href='detalleTicketEmpleado.php?id=" . $ticket['id'] . "'>Ver detalles</a></td>";
                     echo "</tr>";
                 }
             ?>
