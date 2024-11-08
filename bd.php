@@ -27,68 +27,94 @@ function crearTicket($id_usu, $descr, $asunto)
 	$bd = new PDO(
 		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
 		$bd_config["usuario"],
-		$bd_config["clave"] 
+		$bd_config["clave"]
 	);
 
-	   // Verificar si el usuario existe
-	   $checkUser = $bd->prepare("SELECT id FROM usuarios WHERE id = :id_usu");
-	   $checkUser->execute([':id_usu' => $id_usu]);
-	   if ($checkUser->rowCount() === 0) {
-		   // El usuario no existe
-		   return FALSE;
-	   }
-   
-	   // Preparar la sentencia SQL
-	   $stmt = $bd->prepare("INSERT INTO tickets (fecha_creacion, fecha_actualizacion, id_usu, descripcion, asunto) VALUES (:fecha_creacion, :fecha_actualizacion, :id_usu, :descr, :asunto)");
-   
-	   // Obtener la fecha y hora actual
-	   $fecha_hora_actual = date("Y-m-d H:i:s");
-   
-	   // Ejecutar la sentencia preparada
-	   $result = $stmt->execute([
-		   ':fecha_creacion' => $fecha_hora_actual,
-		   ':fecha_actualizacion' => $fecha_hora_actual,
-		   ':id_usu' => $id_usu,
-		   ':descr' => $descr,
-		   ':asunto' => $asunto
-	   ]);
-   
-	   if ($result && $stmt->rowCount() === 1) {
-		   return $bd->lastInsertId(); // Devuelve el ID del ticket insertado
-	   } else {
-		   return FALSE;
-	   }
+	// Verificar si el usuario existe
+	$checkUser = $bd->prepare("SELECT id FROM usuarios WHERE id = :id_usu");
+	$checkUser->execute([':id_usu' => $id_usu]);
+	if ($checkUser->rowCount() === 0) {
+		// El usuario no existe
+		return FALSE;
+	}
+
+	// Creo la sentencia SQL y ejecuto	
+	$fecha_hora_actual = '"' . date("Y-m-d H:i:s") . '"';
+	$descr = "'" . $descr . "'";
+	$asunto = "'" . $asunto . "'";
+	$ins = "insert into tickets (fecha_creacion,fecha_actualizacion,id_usu,descripcion,asunto) VALUES ($fecha_hora_actual,$fecha_hora_actual,$id_usu,$descr,$asunto)";
+	$resul = $bd->query($ins);
+	if ($resul->rowCount() === 1) {
+		return $bd->lastInsertId(); // Devuelve el ID del ticket insertado
+	} else {
+		return FALSE;
+	}
 }
 
 
-function empleadoTickets($id_usu){
-										// Incluyo los parámetros de conexión y creo el objeto PDO
-	   // Conexión a la base de datos incluyendo los datos 
-	   include "configuracion_bd.php";
-	   $bd = new PDO(
-		   "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
-		   $bd_config["usuario"],
-		   $bd_config["clave"]
-	   );
-	   // Consulta SQL para seleccionar los tickets del usuario, ordenados por fecha de creación
-	   $query = "SELECT *
+function empleadoTickets($id_usu)
+{
+	// Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+	// Consulta SQL para seleccionar los tickets del usuario, ordenados por fecha de creación
+	$query = "SELECT id, asunto, estado, fecha_creacion 
 	   				FROM tickets WHERE id_usu = :id_usu ORDER BY
 					 fecha_creacion DESC";
-		//sentencia para ejecutarla de forma segura
-		$stmt = $bd->prepare($query);
-		//la consulta con el ID del usuario como parámetro
-    	$stmt->execute([':id_usu' =>$id_usu]);
+	//sentencia para ejecutarla de forma segura
+	$stmt = $bd->prepare($query);
+	//la consulta con el ID del usuario como parámetro
+	$stmt->execute([':id_usu' => $id_usu]);
 
-		// Devuelve todos los tickets en un array asociativo
-		$tickets =  $stmt->fetchAll(PDO::FETCH_ASSOC);
-		// Esto te ayudará a ver lo que se está devolviendo
-		//var_dump($tickets);  
-		//return $tickets;
-		// Devuelve los tickets
-		return $tickets;
-		
+	// Devuelve todos los tickets en un array asociativo
+	$tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	// Esto te ayudará a ver lo que se está devolviendo
+	//var_dump($tickets);  
+	//return $tickets;
+
+
+
+	// Devuelve los tickets
+	return $tickets;
+
 }
+function tecnicoTickets()
+{
+	// Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+	// Consulta SQL para seleccionar los tickets del usuario, ordenados por fecha de creación
+	$query = "SELECT t.id, u.nombre AS nombre_empleado, t.asunto, t.estado, t.prioridad, t.fecha_creacion, t.fecha_actualizacion
+              FROM tickets t
+              JOIN usuarios u ON t.id_usu = u.id
+              ORDER BY t.fecha_creacion DESC";
+	//sentencia para ejecutarla de forma segura
+	$stmt = $bd->prepare($query);
+	//la consulta con el ID del usuario como parámetro
+	$stmt->execute();
 
+	// Devuelve todos los tickets en un array asociativo
+	$tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	// Esto te ayudará a ver lo que se está devolviendo
+	//var_dump($tickets);  
+	//return $tickets;
+
+
+
+	// Devuelve los tickets
+	return $tickets;
+
+}
 
 
 function cargar_categorias()
