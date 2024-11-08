@@ -81,12 +81,38 @@ function empleadoTickets($id_usu){
 
 		// Devuelve todos los tickets en un array asociativo
 		$tickets =  $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 		// Esto te ayudará a ver lo que se está devolviendo
 		//var_dump($tickets);  
 		//return $tickets;
 		// Devuelve los tickets
 		return $tickets;
-		
+}
+
+function obtenerTicket($id){
+											// Incluyo los parámetros de conexión y creo el objeto PDO
+	   // Conexión a la base de datos incluyendo los datos 
+	   include "configuracion_bd.php";
+	   $bd = new PDO(
+		   "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		   $bd_config["usuario"],
+		   $bd_config["clave"]
+	   );
+	   // Consulta SQL para seleccionar los tickets del usuario, ordenados por fecha de creación
+	   $query = "SELECT * FROM tickets WHERE id = :id";
+		//sentencia para ejecutarla de forma segura
+		$stmt = $bd->prepare($query);
+		//la consulta con el ID del usuario como parámetro
+    	$stmt->execute([':id' =>$id]);
+
+		// Devuelve todos los tickets en un array asociativo
+		$tickets =  $stmt->fetchAll(PDO::FETCH_ASSOC);
+		    // Verificar si hay resultados
+			if (count($tickets) > 0) {
+				return $tickets;
+			} else {
+				return false; // 
+			}
 }
 
 
