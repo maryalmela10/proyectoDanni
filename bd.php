@@ -82,7 +82,6 @@ function empleadoTickets($id_usu)
 	// Devuelve los tickets
 	return $tickets;
 
-<<<<<<< HEAD
 		// Devuelve todos los tickets en un array asociativo
 		$tickets =  $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -117,8 +116,6 @@ function obtenerTicket($id){
 			} else {
 				return false; // 
 			}
-=======
->>>>>>> 2d5f1764f8a5ce29a9a380b47b2ea93079cc44c2
 }
 function tecnicoTickets()
 {
