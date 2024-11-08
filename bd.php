@@ -27,7 +27,7 @@ function crearTicket($id_usu, $descr, $asunto)
 	$bd = new PDO(
 		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
 		$bd_config["usuario"],
-		$bd_config["clave"]
+		$bd_config["clave"] 
 	);
 
 	   // Verificar si el usuario existe
@@ -37,18 +37,27 @@ function crearTicket($id_usu, $descr, $asunto)
 		   // El usuario no existe
 		   return FALSE;
 	   }
-
-	// Creo la sentencia SQL y ejecuto	
-	$fecha_hora_actual = '"'.date("Y-m-d H:i:s").'"';
-	$descr = "'".$descr."'";
-	$asunto = "'".$asunto."'";
-	$ins = "insert into tickets (fecha_creacion,fecha_actualizacion,id_usu,descripcion,asunto) VALUES ($fecha_hora_actual,$fecha_hora_actual,$id_usu,$descr,$asunto)";
-	$resul = $bd->query($ins);
-	if ($resul->rowCount() === 1) {
-		return $bd->lastInsertId(); // Devuelve el ID del ticket insertado
-    } else {
-		return FALSE;
-	}
+   
+	   // Preparar la sentencia SQL
+	   $stmt = $bd->prepare("INSERT INTO tickets (fecha_creacion, fecha_actualizacion, id_usu, descripcion, asunto) VALUES (:fecha_creacion, :fecha_actualizacion, :id_usu, :descr, :asunto)");
+   
+	   // Obtener la fecha y hora actual
+	   $fecha_hora_actual = date("Y-m-d H:i:s");
+   
+	   // Ejecutar la sentencia preparada
+	   $result = $stmt->execute([
+		   ':fecha_creacion' => $fecha_hora_actual,
+		   ':fecha_actualizacion' => $fecha_hora_actual,
+		   ':id_usu' => $id_usu,
+		   ':descr' => $descr,
+		   ':asunto' => $asunto
+	   ]);
+   
+	   if ($result && $stmt->rowCount() === 1) {
+		   return $bd->lastInsertId(); // Devuelve el ID del ticket insertado
+	   } else {
+		   return FALSE;
+	   }
 }
 
 
@@ -62,7 +71,7 @@ function empleadoTickets($id_usu){
 		   $bd_config["clave"]
 	   );
 	   // Consulta SQL para seleccionar los tickets del usuario, ordenados por fecha de creación
-	   $query = "SELECT id, asunto, estado, fecha_creacion 
+	   $query = "SELECT *
 	   				FROM tickets WHERE id_usu = :id_usu ORDER BY
 					 fecha_creacion DESC";
 		//sentencia para ejecutarla de forma segura

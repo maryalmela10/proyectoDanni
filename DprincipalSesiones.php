@@ -1,18 +1,10 @@
-<!-- <?php
+<?php
     session_start();
-    // Voy a ver si el usuario se ha logueado
-    // si se ha logueado es que tiene que haber una variable que se llama $_SESSION["usu"]
-    if(isset($_SESSION["logueado"])) {
-        if($_SESSION["logueado"]=="0"){
-            echo "Bienvenido/a empleado: " . $_SESSION["nombre"];
-        } else {
-            echo "No perteneces aquí";
-        }
-    } else {
-        // Le mando al loguin
-        header("Location: DloginSesiones.php");
+    if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
+        header("Location: login.php");
+        exit();
     }
-?> -->
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,11 +12,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Tickets - Página Principal</title>
     <link rel="stylesheet" href="stylesheetUsuario.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            color: #003366;
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 10px 0;
+        }
+        nav {
+            background-color: #004080;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li {
+            display: inline;
+            font-weight:bold;
+            margin-right: 20px;
+        }
+        nav ul li a {
+            color: #003366;
+            text-decoration: none;
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="container">
             <h1>Sistema de Tickets</h1>
+            <p>Bienvenido/a empleado: <?php echo htmlspecialchars($_SESSION["nombre"]); ?></p>
         </div>
     </header>
     
@@ -32,41 +72,14 @@
         <div class="container">
             <ul>
                 <li><a href="crearTickets.php">Crear Nuevo Ticket</a></li>
-                <li><a href="misTickets.php" onclick="showContent('misTickets.php')">Mis Tickets</a></li>
             </ul>
         </div>
     </nav>
 
-        <div id="mis-tickets" class="content hidden">
-            <h2>Mis Tickets</h2>
-            
-            <?php
-                include 'misTickets.php';
- 
-            
-            ?>
+    <div class="container">
+        <div id="mis-tickets" class="content">
+            <?php include 'misTickets.php'; ?>
         </div>
-
-        <!-- Aquí se pueden agregar más secciones condicionales si es necesario -->
     </div>
-            <!-- Aquí iría una tabla o lista con los tickets del empleado -->
-        </div>
-    
-
-    <script>
-        function showContent(id) {
-            // Ocultar todos los contenidos
-            document.querySelectorAll('.content').forEach(function(el) {
-                el.classList.add('hidden');
-            });
-            // Mostrar el contenido seleccionado
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        // Mostrar la sección de "Crear Nuevo Ticket" por defecto al cargar la página
-        document.addEventListener("DOMContentLoaded", function() {
-          showContent('mis-tickets');
-        });
-    </script>
 </body>
 </html>

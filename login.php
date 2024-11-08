@@ -13,13 +13,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		session_start();
 		$_SESSION["nombre"] = $usu['email'];
 		$_SESSION['id'] = $usu['id'];
-		$_SESSION["rol"] = $usu['rol'];
-		if($_SESSION["rol"]==0){
-			$_SESSION["logueado"] = 0;
+		$_SESSION["logueado"] = $usu['rol'];
+		if($_SESSION["logueado"]==0){
 			// Le mando a la página principal
 			header("Location: DprincipalSesiones.php");
 		} else {
-			$_SESSION["logueado"] = 1;
 			header("Location: baseDatosEjercicio5Admin.php");
 		}
 	}	
