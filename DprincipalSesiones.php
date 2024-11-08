@@ -32,17 +32,26 @@
         <div class="container">
             <ul>
                 <li><a href="crearTickets.php">Crear Nuevo Ticket</a></li>
-                <li><a href="#" onclick="showContent('mis-tickets')">Mis Tickets</a></li>
+                <li><a href="misTickets.php" onclick="showContent('misTickets.php')">Mis Tickets</a></li>
             </ul>
         </div>
     </nav>
 
         <div id="mis-tickets" class="content hidden">
             <h2>Mis Tickets</h2>
-            <p>Aquí se mostrará la lista de tus tickets.</p>
+            
+            <?php
+                include 'misTickets.php';
+ 
+            
+            ?>
+        </div>
+
+        <!-- Aquí se pueden agregar más secciones condicionales si es necesario -->
+    </div>
             <!-- Aquí iría una tabla o lista con los tickets del empleado -->
         </div>
-    </div>
+    
 
     <script>
         function showContent(id) {
