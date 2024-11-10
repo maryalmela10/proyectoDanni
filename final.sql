@@ -36,12 +36,12 @@ CREATE TABLE `tickets` (
   `descripcion` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `asunto` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `prioridad` enum('baja','media','alta') DEFAULT 'media',
-  `estado` enum('creado','en proceso','solucionado','cerrado') DEFAULT 'creado'
+  `estado` enum('Creado','En proceso','Solucionado','Cerrado') DEFAULT 'Creado'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
---
+--s
 -- Estructura de tabla para la tabla `usuarios`
 --
 

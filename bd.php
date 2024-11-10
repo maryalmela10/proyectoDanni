@@ -106,14 +106,15 @@ function obtenerTicket($id){
     	$stmt->execute([':id' =>$id]);
 
 		// Devuelve todos los tickets en un array asociativo
-		$tickets =  $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$ticket =  $stmt->fetch(PDO::FETCH_ASSOC);
 		    // Verificar si hay resultados
-			if (count($tickets) > 0) {
-				return $tickets;
+			if ($ticket) {
+				return $ticket;
 			} else {
 				return false; // 
 			}
 }
+
 function tecnicoTickets()
 {
 	// Incluyo los parámetros de conexión y creo el objeto PDO

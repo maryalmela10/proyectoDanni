@@ -6,19 +6,15 @@ session_start();
 if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
     // Obtener el ID del usuario desde la sesión        
     $id = $_SESSION['id'];
-    // Depurar el valor de la variable $_SESSION['id']
-    //var_dump($id);  // Verifica qué valor tiene el ID en la sesión
 
     // Llamar a la función para obtener los tickets del usuario
-
     $tickets = tecnicoTickets();
 
-    //var_dump($tickets); // Esto te ayudará a depurar qué datos está recibiendo
     // Comprobar si la función devolvió resultados
     if ($tickets) {
         // Mostrar la tabla con los tickets        
-
-        ?><!DOCTYPE html>
+        ?>
+        <!DOCTYPE html>
         <html lang="es">
 
         <head>
@@ -33,14 +29,12 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
                     align-items: center;
                     margin: 0;
                     padding: 20px;
-                    background-color: #001f3f;
-                    /* Fondo azul oscuro */
+                    background-color: #001f3f; /* Fondo azul oscuro */
                     color: #ffffff;
                 }
 
                 h1 {
-                    color: #00c0ff;
-                    /* Azul claro para el título */
+                    color: #00c0ff; /* Azul claro para el título */
                 }
 
                 table {
@@ -66,6 +60,22 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
 
                 tr:hover {
                     background-color: #f2f2f2;
+                }
+
+                .logout-button {
+                    position: fixed; /* Fija el botón en la pantalla */
+                    bottom: 20px; /* Espaciado desde abajo */
+                    right: 20px; /* Espaciado desde la derecha */
+                    padding: 10px 15px; /* Espaciado interno */
+                    background-color: #ff4d4d; /* Color de fondo rojo */
+                    color: white; /* Color del texto */
+                    border: none; /* Sin borde */
+                    border-radius: 5px; /* Bordes redondeados */
+                    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+                }
+
+                .logout-button:hover {
+                    background-color: #ff1a1a; /* Color más oscuro al pasar el mouse */
                 }
             </style>
         </head>
@@ -94,13 +104,19 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
                             <td><?php echo htmlspecialchars($ticket['prioridad']); ?></td>
                             <td><?php echo htmlspecialchars($ticket['fecha_creacion']); ?></td>
                             <td><?php echo htmlspecialchars($ticket['fecha_actualizacion']); ?></td>
-                            <td><a href='detalleTicketTecnico.php?id="<?php echo htmlspecialchars($ticket['id']);?>"'>Ver detalles</a></td>
+                            <td><a href='detalleTicketTecnico.php?id=<?php echo htmlspecialchars($ticket['id']); ?>'>Ver detalles</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>
             <?php else: ?>
                 <p>No hay tickets registrados.</p>
             <?php endif; ?>
+
+            <!-- Botón de cerrar sesión -->
+            <form action="cerrarSesion.php" method="post">
+                <button type="submit" class="logout-button">Cerrar Sesión</button>
+            </form>
+
         </body>
 
         </html>
@@ -110,4 +126,9 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
         header("Location: login.php");
         exit();
     }
-}
+}else{
+        // Redirigir al login si el usuario no está logueado o no es técnico
+        header("Location: login.php");
+        exit();
+    }
+?>

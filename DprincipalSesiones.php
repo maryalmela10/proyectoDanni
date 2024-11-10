@@ -1,9 +1,9 @@
 <?php
-    session_start();
-    if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
-        header("Location: login.php");
-        exit();
-    }
+session_start();
+if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
+    header("Location: login.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -11,7 +11,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Tickets - Página Principal</title>
-    <link rel="stylesheet" href="stylesheetUsuario.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,7 +45,10 @@
         }
         nav ul li a {
             color: #003366;
+            background-color: white;
+            border-radius: 5px;
             text-decoration: none;
+            padding: 20px;
         }
         .content {
             background-color: white;
@@ -58,6 +60,24 @@
         .hidden {
             display: none;
         }
+        nav ul li a:hover {
+    background-color: #d9d9d9; /* Cambia el color al pasar el mouse */
+}
+.logout-button {
+                    position: fixed; /* Fija el botón en la pantalla */
+                    bottom: 20px; /* Espaciado desde abajo */
+                    right: 20px; /* Espaciado desde la derecha */
+                    padding: 10px 15px; /* Espaciado interno */
+                    background-color: #ff4d4d; /* Color de fondo rojo */
+                    color: white; /* Color del texto */
+                    border: none; /* Sin borde */
+                    border-radius: 5px; /* Bordes redondeados */
+                    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+                }
+
+                .logout-button:hover {
+                    background-color: #ff1a1a; /* Color más oscuro al pasar el mouse */
+                }
     </style>
 </head>
 <body>
@@ -81,5 +101,9 @@
             <?php include 'misTickets.php'; ?>
         </div>
     </div>
+    <!-- Botón de cerrar sesión -->
+    <form action="cerrarSesion.php" method="post">
+                <button type="submit" class="logout-button">Cerrar Sesión</button>
+            </form>
 </body>
 </html>

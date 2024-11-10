@@ -1,7 +1,7 @@
 <?php
 require_once 'bd.php';
     session_start();
-    if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
+    if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "1") {
         header("Location: login.php");
         exit();
     }
@@ -88,10 +88,19 @@ require_once 'bd.php';
         <div class="ticket-info">
             <p><span class="label">ID:</span> <span class="value"><?php echo htmlspecialchars($ticket['id']); ?></span></p>
             <p><span class="label">Asunto:</span> <span class="value"><?php echo htmlspecialchars($ticket['asunto']); ?></span></p>
-            <p><span class="label">Estado:</span> <span class="value"><?php echo htmlspecialchars($ticket['estado']); ?></span></p>
+            <p><span class="label">Estado:</span> 
+            <form action="detalleTicketTecnico.php" method="POST">
+            <select id="opciones">
+                <option value=""><?php echo htmlspecialchars($ticket['estado']); ?></option>
+                <option value="opcion1">Solucionado</option>
+                <option value="opcion2">En proceso</option>
+                <option value="opcion2">Cerrado</option>
+            </select>
             <p><span class="label">Fecha de Creación:</span> <span class="value"><?php echo htmlspecialchars($ticket['fecha_creacion']); ?></span></p>
             <p><span class="label">Descripción:</span></p>
             <p class="value"><?php echo nl2br(htmlspecialchars($ticket['descripcion'])); ?></p>
+            <input type="submit" value="Mandar cambios" class="back-link">
+            </form>
         </div>
 
         <div class="messages">
