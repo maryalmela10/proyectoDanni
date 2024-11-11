@@ -1,16 +1,42 @@
 <?php
 require_once 'bd.php';
-    session_start();
-    if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "1") {
-        header("Location: login.php");
-        exit();
-    }
+session_start();
+if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "1") {
+    header("Location: login.php");
+    exit();
+}
 
-    if ($_SERVER["REQUEST_METHOD"] == "GET") {
-        if(isset($_GET['id']) && !empty($_GET['id'])){
-            $ticket = obtenerTicket($_GET['id']);
-            if ($ticket) {
-            
+$mensaje = '';
+$ticket = null;
+
+// Obtener el ID del ticket
+$ticketId = isset($_GET['id']) ? $_GET['id'] : (isset($_POST['ticket_id']) ? $_POST['ticket_id'] : null);
+
+if (!$ticketId) {
+    die("No se proporcionó ID de ticket");
+}
+
+// Procesar POST si existe
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if(isset($_POST['opcionesEstado']) && !empty($_POST['opcionesEstado'])) {
+        $nuevoEstado = $_POST['opcionesEstado'];
+        
+        if(actualizarEstadoTicket($ticketId, $nuevoEstado)) {
+            $mensaje = "Estado actualizado correctamente.";
+        } else {
+            $mensaje = "Error al actualizar el estado.";
+        }
+    }
+}
+
+// Obtener información del ticket (tanto para GET como para POST)
+$ticket = obtenerTicket($ticketId);
+
+if (!$ticket) {
+    die("No se pudo obtener la información del ticket");
+}
+
+// Aquí comienza el HTML
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -85,29 +111,32 @@ require_once 'bd.php';
 <body>
     <div class="ticket-container">
         <h2>Detalles del Ticket</h2>
+        <?php if(!empty($mensaje)): ?>
+            <p><?php echo $mensaje; ?></p>
+        <?php endif; ?>
         <div class="ticket-info">
             <p><span class="label">ID:</span> <span class="value"><?php echo htmlspecialchars($ticket['id']); ?></span></p>
             <p><span class="label">Asunto:</span> <span class="value"><?php echo htmlspecialchars($ticket['asunto']); ?></span></p>
             <p><span class="label">Estado:</span> 
-            <form action="detalleTicketTecnico.php" method="POST">
-            <select id="opciones">
-                <option value=""><?php echo htmlspecialchars($ticket['estado']); ?></option>
-                <option value="opcion1">Solucionado</option>
-                <option value="opcion2">En proceso</option>
-                <option value="opcion2">Cerrado</option>
-            </select>
+            <form action="detalleTicketTecnico.php?id=<?php echo $ticketId; ?>" method="POST">
+                <input type="hidden" name="ticket_id" value="<?php echo $ticketId; ?>">
+                <select id="opciones" name="opcionesEstado">
+                    <option value="Creado" <?php echo ($ticket['estado'] == 'Creado') ? 'selected' : ''; ?>>Creado</option>
+                    <option value="En proceso" <?php echo ($ticket['estado'] == 'En proceso') ? 'selected' : ''; ?>>En proceso</option>
+                    <option value="Solucionado" <?php echo ($ticket['estado'] == 'Solucionado') ? 'selected' : ''; ?>>Solucionado</option>
+                    <option value="Cerrado" <?php echo ($ticket['estado'] == 'Cerrado') ? 'selected' : ''; ?>>Cerrado</option>
+                </select>
+                <input type="submit" value="Actualizar Estado" class="back-link">
+            </form>
             <p><span class="label">Fecha de Creación:</span> <span class="value"><?php echo htmlspecialchars($ticket['fecha_creacion']); ?></span></p>
             <p><span class="label">Descripción:</span></p>
             <p class="value"><?php echo nl2br(htmlspecialchars($ticket['descripcion'])); ?></p>
-            <input type="submit" value="Mandar cambios" class="back-link">
-            </form>
         </div>
 
         <div class="messages">
             <h3>Mensajes</h3>
             <?php
-            // Aquí deberías obtener y mostrar los mensajes asociados al ticket
-            $mensajes = obtenerTicket($ticketId); // Implementa esta función en bd.php
+            // $mensajes = obtenerMensajesTicket($ticketId); // Asegúrate de implementar esta función
             if ($mensajes) {
                 foreach ($mensajes as $mensaje) {
                     echo "<div class='message'>";
@@ -121,14 +150,7 @@ require_once 'bd.php';
             ?>
         </div>
 
-        <a href="DprincipalSesiones.php" class="back-link">Volver a Mis Tickets</a>
+        <a href="paginaTecnico.php" class="back-link">Volver a Mis Tickets</a>
     </div>
 </body>
 </html>
-<?php
- }
-} else{
-    header("Location: DprincipalSesiones.php");
-exit();
-}
-      } 

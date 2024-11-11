@@ -142,9 +142,35 @@ function tecnicoTickets()
 	//return $tickets;
 	// Devuelve los tickets
 	return $tickets;
-
 }
 
+function actualizarEstadoTicket($idTicket, $nuevoEstado){
+// Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+// Consulta SQL para actualizar el estado del ticket
+$query = "UPDATE tickets SET estado = :estado, fecha_actualizacion = NOW() WHERE id = :id";
+
+// Preparar la sentencia
+$stmt = $bd->prepare($query);
+
+$stmt->execute([
+    ':estado' => $nuevoEstado,
+    ':id' => $idTicket
+]);
+	// Verificar si se actualizó alguna fila
+	if ($stmt->rowCount() > 0) {
+		return true; // Actualización exitosa
+	} else {
+		return false; // No se encontró el ticket o no se realizaron cambios
+
+}
+}
 
 
 
