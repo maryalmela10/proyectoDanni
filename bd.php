@@ -159,12 +159,10 @@ $query = "UPDATE tickets SET estado = :estado, fecha_actualizacion = NOW() WHERE
 // Preparar la sentencia
 $stmt = $bd->prepare($query);
 
-// Vincular los parámetros
-$stmt->bindParam(':estado', $nuevoEstado, PDO::PARAM_STR);
-$stmt->bindParam(':id', $idTicket, PDO::PARAM_INT);
-
-// Ejecutar la consulta
-	$stmt->execute();
+$stmt->execute([
+    ':estado' => $nuevoEstado,
+    ':id' => $idTicket
+]);
 	// Verificar si se actualizó alguna fila
 	if ($stmt->rowCount() > 0) {
 		return true; // Actualización exitosa
