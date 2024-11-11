@@ -11,9 +11,9 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
     $tickets = tecnicoTickets();
 
     // Comprobar si la función devolvió resultados
-    if ($tickets) {
+    //if ($tickets) {
         // Mostrar la tabla con los tickets        
-        ?>
+?>
         <!DOCTYPE html>
         <html lang="es">
 
@@ -121,12 +121,8 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
 
         </html>
         <?php
-    } else {
-        // Redirigir al login si el usuario no está logueado o no es técnico
-        header("Location: login.php");
-        exit();
-    }
-}else{
+
+    }else{
         // Redirigir al login si el usuario no está logueado o no es técnico
         header("Location: login.php");
         exit();
