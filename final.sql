@@ -41,7 +41,7 @@ CREATE TABLE `tickets` (
 
 -- --------------------------------------------------------
 
---s
+--
 -- Estructura de tabla para la tabla `usuarios`
 --
 
