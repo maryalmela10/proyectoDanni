@@ -52,6 +52,21 @@ CREATE TABLE `usuarios` (
   `contraseña` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `rol` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `mensajes`
+--
+CREATE TABLE mensajes(
+    'id' INT AUTO_INCREMENT PRIMARY KEY,
+    'ticket_id' INT NOT NULL,
+    'remitente_id' INT NOT NULL,  -- Referencia al ID de usuario (técnico o usuario)
+    'contenido' TEXT NOT NULL,
+    'fecha_envio' DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE,
+    FOREIGN KEY (remitente_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
 
 --
 -- Índices para tablas volcadas
