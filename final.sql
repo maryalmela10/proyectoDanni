@@ -57,15 +57,13 @@ CREATE TABLE `usuarios` (
 --
 -- Estructura de tabla para la tabla `mensajes`
 --
-CREATE TABLE mensajes(
+CREATE TABLE mensajes (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `ticket_id` INT NOT NULL,
-    `remitente_id` INT NOT NULL,  -- Referencia al ID de usuario (técnico o usuario)
+    `remitente_id` INT NOT NULL,
     `contenido` TEXT NOT NULL,
-    `fecha_envio` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE,
-    FOREIGN KEY (remitente_id) REFERENCES usuarios(id) ON DELETE CASCADE
-);
+    `fecha_envio` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 --
@@ -112,6 +110,17 @@ ALTER TABLE `usuarios`
 ALTER TABLE `tickets`
   ADD CONSTRAINT `fk_usuario` FOREIGN KEY (`id_usu`) REFERENCES `usuarios` (`id`);
 COMMIT;
+
+--
+-- Foreign key de mensajes
+--
+ALTER TABLE mensajes
+ADD CONSTRAINT fk_ticket_id
+FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE;
+
+ALTER TABLE mensajes
+ADD CONSTRAINT fk_remitente_id
+FOREIGN KEY (remitente_id) REFERENCES usuarios(id) ON DELETE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
