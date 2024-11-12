@@ -185,7 +185,7 @@ function obtenerMensajesTicket($ticketId){
 	);
 	// Consulta SQL para traer los mensajes
 
-	$query = "SELECT m.*, u.nombre FROM mensajes m JOIN tickets t on m.ticket_id =t.id JOIN usuarios u ON m.remitente_id=u.id WHERE m.ticket_id=:id ORDER BY m.fecha_envio ASC";
+	$query = "SELECT m.*, u.nombre FROM mensajes m JOIN tickets t on m.ticket_id =t.id JOIN usuarios u ON m.remitente_id=u.id WHERE m.ticket_id=:id ORDER BY m.fecha_envio DESC";
 	// Preparar la sentencia
 	$stmt = $bd->prepare($query);
 
@@ -203,6 +203,53 @@ function letraUpper($cadena){
 $cadenaDev =strtoupper($cadena[0]).substr($cadena, 1);
 return $cadenaDev; 
 };
+
+function crearMensaje($tickedId, $remitenteId, $contenido){
+// Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+
+	// Verificar si el usuario existe
+	$checkUser = $bd->prepare("SELECT id FROM usuarios WHERE id = :id_usu");
+	$checkUser->execute([':id_usu' => $remitenteId]);
+	if ($checkUser->rowCount() === 0) {
+		// El usuario no existe
+		return FALSE;
+	}
+
+	// Verificar si el ticket existe
+	$checkUser = $bd->prepare("SELECT id FROM tickets WHERE id = :ticked_id");
+	$checkUser->execute([':ticked_id' => $tickedId]);
+	if ($checkUser->rowCount() === 0) {
+		// El usuario no existe
+		return FALSE;
+	}
+
+	// Preparar la sentencia SQL para insertar el mensaje
+	$stmt = $bd->prepare("INSERT INTO mensajes (ticket_id, remitente_id, contenido, fecha_envio) VALUES (:ticket_id, :remitente_id, :contenido_m, :fecha_envio)");
+
+	$fecha_actual = date("Y-m-d H:i:s");
+
+	// Ejecutar la sentencia preparada
+	$stmt->execute([
+		':ticket_id' => $tickedId,
+		':remitente_id' => $remitenteId,
+		':contenido_m' => $contenido,
+		':fecha_envio' => $fecha_actual,
+	]);
+
+	if ($stmt->rowCount() === 1) {
+		return $bd->lastInsertId(); // Devuelve el ID del mensaje insertado
+	} else {
+		return FALSE;
+	}
+
+}
 
 function buscarProducto($codigoProducto)
 {

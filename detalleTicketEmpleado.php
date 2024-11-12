@@ -8,7 +8,8 @@ require_once 'bd.php';
 
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
         if(isset($_GET['id']) && !empty($_GET['id'])){
-            $ticket = obtenerTicket($_GET['id']);
+            $ticketId = $_GET['id'];
+            $ticket = obtenerTicket($ticketId);
             if ($ticket) {
             
 ?>
@@ -135,4 +136,7 @@ require_once 'bd.php';
     header("Location: DprincipalSesiones.php");
 exit();
 }
-      } 
+      } else{
+        header("Location: DprincipalSesiones.php");
+exit();
+      }

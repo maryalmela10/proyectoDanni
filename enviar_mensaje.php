@@ -2,7 +2,7 @@
 require_once 'bd.php';
 session_start();
 
-if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "1") {
+if(!isset($_SESSION["logueado"])) {
     header("Location: login.php");
     exit();
 }
@@ -14,20 +14,20 @@ if (!$ticketId) {
     die("No se proporcionó ID de ticket");
 }
 
-// if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//     $contenidoMensaje = isset($_POST['mensaje']) ? trim($_POST['mensaje']) : '';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $contenidoMensaje = isset($_POST['mensaje']) ? trim($_POST['mensaje']) : '';
     
-//     if (!empty($contenidoMensaje)) {
-//         // Aquí debes implementar la función para guardar el mensaje en la base de datos
-//         if (guardarMensaje($ticketId, $_SESSION['usuario_id'], $contenidoMensaje)) {
-//             $mensaje = "Mensaje enviado con éxito.";
-//         } else {
-//             $mensaje = "Error al enviar el mensaje.";
-//         }
-//     } else {
-//         $mensaje = "Por favor, escribe un mensaje.";
-//     }
-// }
+    if (!empty($contenidoMensaje)) {
+        // implementar la función para guardar el mensaje en la base de datos
+        if (crearMensaje($ticketId, $_SESSION['id'], $contenidoMensaje)) {
+            $mensaje = "Mensaje enviado con éxito.";
+        } else {
+            $mensaje = "Error al enviar el mensaje.";
+        }
+    } else {
+        $mensaje = "Por favor, escribe un mensaje.";
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -97,7 +97,7 @@ if (!$ticketId) {
             <textarea name="mensaje" rows="4" placeholder="Escribe tu mensaje aquí" required></textarea>
             <input type="submit" value="Enviar Mensaje" class="submit-button">
         </form>
-        <a href="detalleTicketTecnico.php?id=<?php echo $ticketId; ?>" class="back-link">Volver a Detalles del Ticket</a>
+        <a href="detalleTicketEmpleado.php?id=<?php echo $ticketId; ?>" class="back-link">Volver a Detalles del Ticket</a>
     </div>
 </body>
 </html>
