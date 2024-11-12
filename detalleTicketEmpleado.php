@@ -19,7 +19,7 @@ require_once 'bd.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles del Ticket</title>
     <style>
-        body {
+                body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
@@ -80,6 +80,19 @@ require_once 'bd.php';
             font-size: 0.8em;
             color: #666;
         }
+        .button {
+            display: block;
+            background-color: #003366;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            float: right;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: #002244;
+        }
     </style>
 </head>
 <body>
@@ -93,17 +106,18 @@ require_once 'bd.php';
             <p><span class="label">Descripción:</span></p>
             <p class="value"><?php echo nl2br(htmlspecialchars($ticket['descripcion'])); ?></p>
         </div>
-
         <div class="messages">
+        <a href="enviar_mensaje.php?ticket_id=<?php echo $ticketId; ?>" class="button">Enviar Mensaje</a>
             <h3>Mensajes</h3>
             <?php
-            // Aquí deberías obtener y mostrar los mensajes asociados al ticket
-            $mensajes = obtenerTicket($ticketId); // Implementa esta función en bd.php
+            $mensajes = obtenerMensajesTicket($ticketId); // Asegúrate de implementar esta función
             if ($mensajes) {
                 foreach ($mensajes as $mensaje) {
                     echo "<div class='message'>";
+                    $nombre = letraUpper($mensaje['nombre']);
+                    echo "<p>" . htmlspecialchars($nombre) . "</p>";
                     echo "<p>" . htmlspecialchars($mensaje['contenido']) . "</p>";
-                    echo "<p class='message-date'>" . htmlspecialchars($mensaje['fecha']) . "</p>";
+                    echo "<p class='message-date'>" . htmlspecialchars($mensaje['fecha_envio']) . "</p>";
                     echo "</div>";
                 }
             } else {
@@ -111,7 +125,6 @@ require_once 'bd.php';
             }
             ?>
         </div>
-
         <a href="DprincipalSesiones.php" class="back-link">Volver a Mis Tickets</a>
     </div>
 </body>
