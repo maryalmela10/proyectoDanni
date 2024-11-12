@@ -89,30 +89,31 @@ function empleadoTickets($id_usu)
 	return $tickets;
 }
 
-function obtenerTicket($id){
-											// Incluyo los parámetros de conexión y creo el objeto PDO
-	   // Conexión a la base de datos incluyendo los datos 
-	   include "configuracion_bd.php";
-	   $bd = new PDO(
-		   "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
-		   $bd_config["usuario"],
-		   $bd_config["clave"]
-	   );
-	   // Consulta SQL para seleccionar los tickets del usuario, ordenados por fecha de creación
-	   $query = "SELECT * FROM tickets WHERE id = :id";
-		//sentencia para ejecutarla de forma segura
-		$stmt = $bd->prepare($query);
-		//la consulta con el ID del usuario como parámetro
-    	$stmt->execute([':id' =>$id]);
+function obtenerTicket($id)
+{
+	// Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+	// Consulta SQL para seleccionar los tickets del usuario, ordenados por fecha de creación
+	$query = "SELECT * FROM tickets WHERE id = :id";
+	//sentencia para ejecutarla de forma segura
+	$stmt = $bd->prepare($query);
+	//la consulta con el ID del usuario como parámetro
+	$stmt->execute([':id' => $id]);
 
-		// Devuelve todos los tickets en un array asociativo
-		$ticket =  $stmt->fetch(PDO::FETCH_ASSOC);
-		    // Verificar si hay resultados
-			if ($ticket) {
-				return $ticket;
-			} else {
-				return false; // 
-			}
+	// Devuelve todos los tickets en un array asociativo
+	$ticket =  $stmt->fetch(PDO::FETCH_ASSOC);
+	// Verificar si hay resultados
+	if ($ticket) {
+		return $ticket;
+	} else {
+		return false; // 
+	}
 }
 
 function tecnicoTickets()
@@ -144,8 +145,9 @@ function tecnicoTickets()
 	return $tickets;
 }
 
-function actualizarEstadoTicket($idTicket, $nuevoEstado){
-// Incluyo los parámetros de conexión y creo el objeto PDO
+function actualizarEstadoTicket($idTicket, $nuevoEstado)
+{
+	// Incluyo los parámetros de conexión y creo el objeto PDO
 	// Conexión a la base de datos incluyendo los datos 
 	include "configuracion_bd.php";
 	$bd = new PDO(
@@ -153,28 +155,54 @@ function actualizarEstadoTicket($idTicket, $nuevoEstado){
 		$bd_config["usuario"],
 		$bd_config["clave"]
 	);
-// Consulta SQL para actualizar el estado del ticket
-$query = "UPDATE tickets SET estado = :estado, fecha_actualizacion = NOW() WHERE id = :id";
+	// Consulta SQL para actualizar el estado del ticket
+	$query = "UPDATE tickets SET estado = :estado, fecha_actualizacion = NOW() WHERE id = :id";
 
-// Preparar la sentencia
-$stmt = $bd->prepare($query);
+	// Preparar la sentencia
+	$stmt = $bd->prepare($query);
 
-$stmt->execute([
-    ':estado' => $nuevoEstado,
-    ':id' => $idTicket
-]);
+	$stmt->execute([
+		':estado' => $nuevoEstado,
+		':id' => $idTicket
+	]);
 	// Verificar si se actualizó alguna fila
 	if ($stmt->rowCount() > 0) {
 		return true; // Actualización exitosa
 	} else {
 		return false; // No se encontró el ticket o no se realizaron cambios
 
+	}
 }
+
+function obtenerMensajesTicket($ticketId){
+	// Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+	// Consulta SQL para traer los mensajes
+
+	$query = "SELECT m.*, u.nombre FROM mensajes m JOIN tickets t on m.ticket_id =t.id JOIN usuarios u ON m.remitente_id=u.id WHERE m.ticket_id=:id ORDER BY m.fecha_envio ASC";
+	// Preparar la sentencia
+	$stmt = $bd->prepare($query);
+
+	$stmt->execute([
+		':id' => $ticketId
+	]);
+
+	// Devuelve todos los tickets en un array asociativo
+	$mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	return $mensajes;
 }
 
 
-
-
+function letraUpper($cadena){
+$cadenaDev =strtoupper($cadena[0]).substr($cadena, 1);
+return $cadenaDev; 
+};
 
 function buscarProducto($codigoProducto)
 {

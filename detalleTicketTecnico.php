@@ -6,7 +6,6 @@ if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "1") {
     exit();
 }
 
-$mensaje = '';
 $ticket = null;
 
 // Obtener el ID del ticket
@@ -20,12 +19,7 @@ if (!$ticketId) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(isset($_POST['opcionesEstado']) && !empty($_POST['opcionesEstado'])) {
         $nuevoEstado = $_POST['opcionesEstado'];
-        
-        if(actualizarEstadoTicket($ticketId, $nuevoEstado)) {
-            $mensaje = "Estado actualizado correctamente.";
-        } else {
-            $mensaje = "Error al actualizar el estado.";
-        }
+        actualizarEstadoTicket($ticketId, $nuevoEstado);
     }
 }
 
@@ -106,6 +100,19 @@ if (!$ticket) {
             font-size: 0.8em;
             color: #666;
         }
+        .button {
+            display: block;
+            background-color: #003366;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            float: right;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: #002244;
+        }
     </style>
 </head>
 <body>
@@ -128,20 +135,19 @@ if (!$ticket) {
                 </select>
                 <input type="submit" value="Actualizar Estado" class="back-link">
             </form>
-            <p><span class="label">Fecha de Creación:</span> <span class="value"><?php echo htmlspecialchars($ticket['fecha_creacion']); ?></span></p>
-            <p><span class="label">Descripción:</span></p>
-            <p class="value"><?php echo nl2br(htmlspecialchars($ticket['descripcion'])); ?></p>
         </div>
-
         <div class="messages">
+        <a href="enviar_mensaje.php?ticket_id=<?php echo $ticketId; ?>" class="button">Enviar Mensaje</a>
             <h3>Mensajes</h3>
             <?php
-            // $mensajes = obtenerMensajesTicket($ticketId); // Asegúrate de implementar esta función
+            $mensajes = obtenerMensajesTicket($ticketId); // Asegúrate de implementar esta función
             if ($mensajes) {
                 foreach ($mensajes as $mensaje) {
                     echo "<div class='message'>";
+                    $nombre = letraUpper($mensaje['nombre']);
+                    echo "<p>" . htmlspecialchars($nombre) . "</p>";
                     echo "<p>" . htmlspecialchars($mensaje['contenido']) . "</p>";
-                    echo "<p class='message-date'>" . htmlspecialchars($mensaje['fecha']) . "</p>";
+                    echo "<p class='message-date'>" . htmlspecialchars($mensaje['fecha_envio']) . "</p>";
                     echo "</div>";
                 }
             } else {
@@ -149,7 +155,6 @@ if (!$ticket) {
             }
             ?>
         </div>
-
         <a href="paginaTecnico.php" class="back-link">Volver a Mis Tickets</a>
     </div>
 </body>
