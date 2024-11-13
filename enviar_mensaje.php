@@ -7,6 +7,8 @@ if(!isset($_SESSION["logueado"])) {
     exit();
 }
 
+$rolPrincipal= $_SESSION["logueado"]==0 ? 'detalleTicketEmpleado.php' : 'detalleTicketTecnico.php';
+
 $ticketId = isset($_GET['ticket_id']) ? $_GET['ticket_id'] : null;
 $mensaje = '';
 
@@ -97,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <textarea name="mensaje" rows="4" placeholder="Escribe tu mensaje aquí" required></textarea>
             <input type="submit" value="Enviar Mensaje" class="submit-button">
         </form>
-        <a href="detalleTicketEmpleado.php?id=<?php echo $ticketId; ?>" class="back-link">Volver a Detalles del Ticket</a>
+        <a href="<?php echo $rolPrincipal; ?>?id=<?php echo $ticketId; ?>" class="back-link">Volver a Detalles del Ticket</a>
     </div>
 </body>
 </html>
