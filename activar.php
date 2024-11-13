@@ -1,37 +1,68 @@
 <?php
-// activar.php
-include "configuracion_bd.php";
-$bd = new PDO(
-    "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
-    $bd_config["usuario"],
-    $bd_config["clave"]
-);
+require_once 'bd.php';
 
 if (isset($_GET['email']) && isset($_GET['token'])) {
-    $email = $_GET['email'];
-    $token = $_GET['token'];
-
-    // Obtener el hash de contraseña de la base de datos
-    $sql = "SELECT contraseña FROM usuarios WHERE email = :email";
-    $stmt = $bd->prepare($sql);
-    $stmt->execute([':email' => $email]);
-
-    if ($stmt->rowCount() > 0) {
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $hash_contraseña = $row['contraseña'];
-
-        // Verificar si el token coincide con la contraseña cifrada
-        if ($hash_contraseña === $token) {
-            echo "Cuenta activada con éxito. Puedes iniciar sesión.";
-            // Aquí puedes redirigir al usuario a la página de inicio de sesión o cualquier otra acción que desees.
-        } else {
-            echo "Enlace de activación no válido.";
-        }
-    } else {
-        echo "Usuario no encontrado.";
-    }
-} else {
-    echo "Enlace de activación inválido.";
+    $email = urldecode($_GET['email']);
+    $token = urldecode($_GET['token']);
+    $resultado = activar($email, $token);
 }
-
 ?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activación de Cuenta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #001f3f;
+        }
+        .login-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #003366;
+        }
+        .message {
+            text-align: center;
+            color: #003366;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Activación de Cuenta</h2>
+    <div class="message">
+        <?php
+        if (isset($resultado)) {
+            if ($resultado) {
+                echo "Tu cuenta ha sido activada exitosamente. Ahora puedes <a href='login.php'>iniciar sesión</a>.";
+            } else {
+                echo "<span class='error'>El enlace de activación no es válido, ha expirado o ya ha sido usado.</span>";
+            }
+        } else {
+            echo "<span class='error'>Enlace de activación inválido.</span>";
+        }
+        ?>
+    </div>
+</div>
+
+</body>
+</html>

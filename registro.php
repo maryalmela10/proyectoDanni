@@ -1,23 +1,27 @@
 <?php 
-require_once 'bd.php'; // Incluye las funciones de la base de datos
+session_start();
+require_once 'bd.php';
 
-// Variables para manejar el estado de los mensajes
 $mensaje = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Obtiene los datos del formulario
-    $email = $_POST['email'];
-    $clave = $_POST['clave'];
 
-    // Llamada a la función para registrar el usuario
-    if (registrarUsuario($email, $clave)) {
-        $mensaje = "¡Te has registrado exitosamente! Revisa tu correo para activar tu cuenta.";
-        // Limpiar los campos del formulario
-        $_POST['email'] = '';
-        $_POST['clave'] = '';
-    } else {
-        $mensaje = "Error: El correo ya está registrado.";
-    }
+    if(isset($_POST['nombre']) && !empty($_POST['nombre']) && isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['clave']) && !empty($_POST['clave'])){
+        $nombre = $_POST['nombre'];
+        $email = $_POST['email'];
+        $clave = $_POST['clave'];
+        $rol = verificarEmailEmpresa($email);
+        if($rol!=-1){
+            if (registrarUsuario($nombre, $email, $clave, $rol)) {
+                $mensaje = "¡Te has registrado exitosamente! Revisa tu correo para activar tu cuenta.";
+                $_POST = array(); // Limpia todos los campos
+            } else {
+                $mensaje = "Error: El correo ya está registrado.";
+            }
+        } else{
+            $mensaje = "Error: El correo debe ser un correo de la empresa";
+        }
+    } 
 }
 ?>
 <!DOCTYPE html>

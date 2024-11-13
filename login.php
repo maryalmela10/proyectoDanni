@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$usuario = $_POST['usuario'];
 	}else{
 		session_start();
-		$_SESSION["nombre"] = $usu['email'];
+		$_SESSION["nombre"] = $usu['nombre'];
 		$_SESSION['id'] = $usu['id'];
 		$_SESSION["logueado"] = $usu['rol'];
 		if($_SESSION["logueado"]==0){

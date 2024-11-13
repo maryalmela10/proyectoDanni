@@ -2,8 +2,8 @@
 use PHPMailer\PHPMailer\PHPMailer;
 require "../vendor/autoload.php";
 
-function enviarEmail($destino, $origen, $asunto, $cuerpo){
-	$mail = new PHPMailer();
+function enviarEmail($destino, $origen, $asunto, $cuerpo, $origenEtiqueta){
+	$mail = new PHPMailer(true);
 	$mail->IsSMTP();
 	// cambiar a 0 para no ver mensajes de error
 	// Looking to send emails in production? Check out our Email API/SMTP product!
@@ -16,11 +16,13 @@ function enviarEmail($destino, $origen, $asunto, $cuerpo){
 	$mail->Username   = "473224c3ed442c";
 	// introducir clave
 	$mail->Password   = "9adb71033c3016";
-	$mail->SetFrom($origen, 'Test');
+	$mail->SetFrom($origen, $origenEtiqueta);
 	// asunto
 	$mail->Subject    = $asunto;
 	// cuerpo
-	$mail->MsgHTML($cuerpo);
+	$mail->isHTML(true); // Establecer el formato del correo a HTML si es necesario
+	$mail->Body    = nl2br($cuerpo); // Cuerpo del mensaje en HTML
+	$mail->AltBody = strip_tags($cuerpo); // Cuerpo alternativo en texto plano para clientes que no soportan HTML
 	// destinatario
 	$address = "probando@servidor.com";
 	$mail->AddAddress($destino, "Test");
@@ -31,51 +33,118 @@ function enviarEmail($destino, $origen, $asunto, $cuerpo){
 	}
 };
 
+function registrarUsuario($nombre, $email, $clave,$rol) {
+		// Incluyo los parámetros de conexión y creo el objeto PDO
+		include "configuracion_bd.php";
+		$bd = new PDO(
+			"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+			$bd_config["usuario"],
+			$bd_config["clave"]
+		);
 
-function registrarUsuario($email, $clave) {
-    include "configuracion_bd.php";
-    $bd = new PDO(
-        "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
-        $bd_config["usuario"],
-        $bd_config["clave"]
-    );
+    // Verificar si el correo ya existe
+    $check = "SELECT id FROM usuarios WHERE email = :email";
+    $stmt_check = $bd->prepare($check);
+    $stmt_check->execute([':email' => $email]);
 
-    // Comprobar si el email ya está registrado
-    $sql = "SELECT id FROM usuarios WHERE email = :email";
-    $stmt = $bd->prepare($sql);
-    $stmt->execute([':email' => $email]);
-
-    if ($stmt->rowCount() > 0) {
-        return false; 
+    if ($stmt_check->rowCount() > 0) {
+        return false; // El correo ya está registrado
     }
 
-    // Asigna el rol basado en el dominio del correo
-    $rol = (strpos($email, '@soporte.empresa.com') !== false) ? 1 : 0;
-
-    // Cifra la contraseña
+    // Generar token de activación
+    $token = bin2hex(random_bytes(16));
     $clave_cifrada = password_hash($clave, PASSWORD_DEFAULT);
 
     // Insertar el usuario en la base de datos
-    $insert = "INSERT INTO usuarios (email, contraseña, rol) VALUES (:email, :clave_cifrada, :rol)";
+    $insert = "INSERT INTO usuarios (nombre, email, contraseña, rol, token_activacion, activo) VALUES (:nombre, :email, :clave_cifrada, :rol, :token, 0)";
     $stmt_insert = $bd->prepare($insert);
-    $stmt_insert->execute([
+    $result = $stmt_insert->execute([
+		':nombre' => $nombre,
         ':email' => $email,
         ':clave_cifrada' => $clave_cifrada,
-        ':rol' => $rol
+        ':rol' => $rol,
+        ':token' => $token
     ]);
 
-    // Codificar la clave cifrada para la URL
-    $clave_cifrada_codificada = urlencode($clave_cifrada);
-
-    // Enviar correo de activación
-    $origen = "no-reply@empresa.com";
-    $asunto = "Activación de cuenta";
-	$cuerpo = "Activa tu cuenta haciendo clic en el enlace: <br>
-           <a href='activar.php?email=$email&clave_cifrada=$clave_cifrada_codificada'>Activa tu cuenta</a>";
-    enviarEmail($email, $origen, $asunto, $cuerpo);
-
-    return true;
+    if ($result) {
+        // Enviar correo de activación
+        enviarCorreoActivacion($email, $token);
+        return true;
+    } else {
+        return false;
+    }
 }
+
+function enviarCorreoActivacion($email, $token) {
+    $destino = $email;
+	$origen = "soporte@empresa.com";
+	$origenEtiqueta = "no-replay";
+    $asunto = "Activa tu cuenta";
+	$cuerpo = "Haz clic en el siguiente enlace para activar tu cuenta: <a href='http://" . $_SERVER['HTTP_HOST'] ."/proyectoDanni/activar.php?email=" . urlencode($email) . "&token=". urlencode($token) ."'>Activar cuenta</a>";
+    enviarEmail($destino, $origen, $asunto, $cuerpo, $origenEtiqueta);
+}
+
+function activar($email, $token){
+	// Incluyo los parámetros de conexión y creo el objeto PDO
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+
+	   // Verificar y activar la cuenta
+	   $update = "UPDATE usuarios SET activo = 1, token_activacion = NULL 
+	   WHERE email = :email AND token_activacion = :token AND activo = 0";
+		$stmt_update = $bd->prepare($update);
+		$result = $stmt_update->execute([
+		':email' => $email,
+		':token' => $token
+		]);
+
+	if ($stmt_update->rowCount() > 0) {
+	return true;
+	} else {
+	return false;
+	}
+}
+
+// function registrarUsuario($email, $clave,$rol) {
+//     include "configuracion_bd.php";
+//     $bd = new PDO(
+//         "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+//         $bd_config["usuario"],
+//         $bd_config["clave"]
+//     );
+
+//     // Cifra la contraseña
+//     $clave_cifrada = password_hash($clave, PASSWORD_DEFAULT);
+
+//     // Insertar el usuario en la base de datos
+//     $insert = "INSERT INTO usuarios (email, contraseña, rol) VALUES (:email, :clave_cifrada, :rol)";
+//     $stmt_insert = $bd->prepare($insert);
+//     $stmt_insert->execute([
+//         ':email' => $email,
+//         ':clave_cifrada' => $clave_cifrada,
+//         ':rol' => $rol
+//     ]);
+
+//     return true;
+// }
+
+function verificarEmailEmpresa($email) {
+    $patronSoporte = '/@soporte\.empresa\.com$/'; // Delimitador '/'
+    $patronEmpleado = '/@empleado\.empresa\.com$/'; // Delimitador '/'
+
+    if (preg_match($patronSoporte, $email)) {
+        return 1;
+    } elseif (preg_match($patronEmpleado, $email)) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
 
 
 function comprobar_usuario($nombre, $clave)
@@ -88,15 +157,23 @@ function comprobar_usuario($nombre, $clave)
 		$bd_config["clave"]
 	);
 
-	// Creo la sentencia SQL y ejecuto	
-	$ins = "select * from usuarios where email = '$nombre' 
-			and contraseña = '$clave'";
-	$resul = $bd->query($ins);
-	if ($resul->rowCount() === 1) {
-		return $resul->fetch();
-	} else {
-		return FALSE;
-	}
+	$ins = "SELECT * FROM usuarios WHERE email = :email";
+    $stmt = $bd->prepare($ins);
+    $stmt->execute([':email' => $nombre]);
+
+    // Verifico si se encontró el usuario
+    if ($stmt->rowCount() === 1) {
+        $usuario = $stmt->fetch();
+
+        // Verifico la contraseña
+        if (password_verify($clave, $usuario['contraseña'])) {
+            return $usuario; // Retorna los datos del usuario si la contraseña es correcta
+        } else {
+            return false; // Contraseña incorrecta
+        }
+    } else {
+        return false; // Usuario no encontrado
+    }
 }
 
 function crearTicket($id_usu, $descr, $asunto, $archivo = null)
