@@ -113,6 +113,9 @@ if (!$ticket) {
         .button:hover {
             background-color: #002244;
         }
+        .derecha{
+            float: right;
+        }
     </style>
 </head>
 <body>
@@ -133,8 +136,10 @@ if (!$ticket) {
                     <option value="Solucionado" <?php echo ($ticket['estado'] == 'Solucionado') ? 'selected' : ''; ?>>Solucionado</option>
                     <option value="Cerrado" <?php echo ($ticket['estado'] == 'Cerrado') ? 'selected' : ''; ?>>Cerrado</option>
                 </select>
-                <input type="submit" value="Actualizar Estado" class="back-link">
+                <input type="submit" value="Actualizar Estado" class="back-link derecha">
             </form>
+            <p><span class="label">Descripción:</span></p>
+            <p class="value"><?php echo nl2br(htmlspecialchars($ticket['descripcion'])); ?></p>
         </div>
         <div class="messages">
         <a href="enviar_mensaje.php?ticket_id=<?php echo $ticketId; ?>" class="button">Enviar Mensaje</a>
