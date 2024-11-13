@@ -20,43 +20,45 @@ function comprobar_usuario($nombre, $clave)
 	}
 }
 
-function crearTicket($id_usu, $descr, $asunto)
+function crearTicket($id_usu, $descr, $asunto, $archivo = null)
 {
-	// Incluyo los parámetros de conexión y creo el objeto PDO
-	include "configuracion_bd.php";
-	$bd = new PDO(
-		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
-		$bd_config["usuario"],
-		$bd_config["clave"]
-	);
+    // Incluyo los parámetros de conexión y creo el objeto PDO
+    include "configuracion_bd.php";
+    $bd = new PDO(
+        "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+        $bd_config["usuario"],
+        $bd_config["clave"]
+    );
 
-	// Verificar si el usuario existe
-	$checkUser = $bd->prepare("SELECT id FROM usuarios WHERE id = :id_usu");
-	$checkUser->execute([':id_usu' => $id_usu]);
-	if ($checkUser->rowCount() === 0) {
-		// El usuario no existe
-		return FALSE;
-	}
+    // Verificar si el usuario existe
+    $checkUser = $bd->prepare("SELECT id FROM usuarios WHERE id = :id_usu");
+    $checkUser->execute([':id_usu' => $id_usu]);
+    if ($checkUser->rowCount() === 0) {
+        // El usuario no existe
+        return FALSE;
+    }
 
-	// Preparar la sentencia SQL para insertar el ticket
-	$stmt = $bd->prepare("INSERT INTO tickets (fecha_creacion, fecha_actualizacion, id_usu, descripcion, asunto) VALUES (:fecha_creacion, :fecha_actualizacion, :id_usu, :descr, :asunto)");
+    // Preparar la sentencia SQL para insertar el ticket
+    $sql = "INSERT INTO tickets (fecha_creacion, fecha_actualizacion, id_usu, descripcion, asunto, archivo_adjunto) VALUES (:fecha_creacion, :fecha_actualizacion, :id_usu, :descr, :asunto, :archivo)";
+    $stmt = $bd->prepare($sql);
 
-	$fecha_actual = date("Y-m-d H:i:s");
+    $fecha_actual = date("Y-m-d H:i:s");
 
-	// Ejecutar la sentencia preparada
-	$stmt->execute(params: [
-		':fecha_creacion' => $fecha_actual,
-		':fecha_actualizacion' => $fecha_actual,
-		':id_usu' => $id_usu,
-		':descr' => $descr,
-		':asunto' => $asunto
-	]);
+    // Ejecutar la sentencia preparada
+    $stmt->execute([
+        ':fecha_creacion' => $fecha_actual,
+        ':fecha_actualizacion' => $fecha_actual,
+        ':id_usu' => $id_usu,
+        ':descr' => $descr,
+        ':asunto' => $asunto,
+        ':archivo' => $archivo
+    ]);
 
-	if ($stmt->rowCount() === 1) {
-		return $bd->lastInsertId(); // Devuelve el ID del ticket insertado
-	} else {
-		return FALSE;
-	}
+    if ($stmt->rowCount() === 1) {
+        return $bd->lastInsertId(); // Devuelve el ID del ticket insertado
+    } else {
+        return FALSE;
+    }
 }
 
 
