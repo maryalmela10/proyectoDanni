@@ -1,4 +1,83 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+require "../vendor/autoload.php";
+
+function enviarEmail($destino, $origen, $asunto, $cuerpo){
+	$mail = new PHPMailer();
+	$mail->IsSMTP();
+	// cambiar a 0 para no ver mensajes de error
+	// Looking to send emails in production? Check out our Email API/SMTP product!
+	$mail->SMTPDebug  = 0;
+	$mail->SMTPAuth   = true;
+	$mail->SMTPSecure = "tls";
+	$mail->Host       = "sandbox.smtp.mailtrap.io";
+	$mail->Port       = 2525;
+	// introducir usuario de google
+	$mail->Username   = "473224c3ed442c";
+	// introducir clave
+	$mail->Password   = "9adb71033c3016";
+	$mail->SetFrom($origen, 'Test');
+	// asunto
+	$mail->Subject    = $asunto;
+	// cuerpo
+	$mail->MsgHTML($cuerpo);
+	// destinatario
+	$address = "probando@servidor.com";
+	$mail->AddAddress($destino, "Test");
+	// enviar
+	$resul = $mail->Send();
+	if (!$resul) {
+		echo "Error" . $mail->ErrorInfo;
+	}
+};
+
+
+function registrarUsuario($email, $clave) {
+    include "configuracion_bd.php";
+    $bd = new PDO(
+        "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+        $bd_config["usuario"],
+        $bd_config["clave"]
+    );
+
+    // Comprobar si el email ya está registrado
+    $sql = "SELECT id FROM usuarios WHERE email = :email";
+    $stmt = $bd->prepare($sql);
+    $stmt->execute([':email' => $email]);
+
+    if ($stmt->rowCount() > 0) {
+        return false; 
+    }
+
+    // Asigna el rol basado en el dominio del correo
+    $rol = (strpos($email, '@soporte.empresa.com') !== false) ? 1 : 0;
+
+    // Cifra la contraseña
+    $clave_cifrada = password_hash($clave, PASSWORD_DEFAULT);
+
+    // Insertar el usuario en la base de datos
+    $insert = "INSERT INTO usuarios (email, contraseña, rol) VALUES (:email, :clave_cifrada, :rol)";
+    $stmt_insert = $bd->prepare($insert);
+    $stmt_insert->execute([
+        ':email' => $email,
+        ':clave_cifrada' => $clave_cifrada,
+        ':rol' => $rol
+    ]);
+
+    // Codificar la clave cifrada para la URL
+    $clave_cifrada_codificada = urlencode($clave_cifrada);
+
+    // Enviar correo de activación
+    $origen = "no-reply@empresa.com";
+    $asunto = "Activación de cuenta";
+	$cuerpo = "Activa tu cuenta haciendo clic en el enlace: <br>
+           <a href='activar.php?email=$email&clave_cifrada=$clave_cifrada_codificada'>Activa tu cuenta</a>";
+    enviarEmail($email, $origen, $asunto, $cuerpo);
+
+    return true;
+}
+
+
 function comprobar_usuario($nombre, $clave)
 {
 	// Incluyo los parámetros de conexión y creo el objeto PDO
