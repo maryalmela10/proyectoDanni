@@ -49,6 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input id="clave" name="clave" type="password" required>
             <input type="submit" value="Iniciar Sesión">
         </form>
+		<!-- botón para redirigir a la pagina de registro -->
+		<p>Aún no tienes cuenta? <a href="registro.php">Regístrate aquí</a></p>
     </div>
 </body>
 </html>
