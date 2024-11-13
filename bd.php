@@ -44,7 +44,7 @@ function crearTicket($id_usu, $descr, $asunto)
 	$fecha_actual = date("Y-m-d H:i:s");
 
 	// Ejecutar la sentencia preparada
-	$stmt->execute([
+	$stmt->execute(params: [
 		':fecha_creacion' => $fecha_actual,
 		':fecha_actualizacion' => $fecha_actual,
 		':id_usu' => $id_usu,
@@ -107,7 +107,7 @@ function obtenerTicket($id)
 	$stmt->execute([':id' => $id]);
 
 	// Devuelve todos los tickets en un array asociativo
-	$ticket =  $stmt->fetch(PDO::FETCH_ASSOC);
+	$ticket = $stmt->fetch(PDO::FETCH_ASSOC);
 	// Verificar si hay resultados
 	if ($ticket) {
 		return $ticket;
@@ -145,6 +145,47 @@ function tecnicoTickets()
 	return $tickets;
 }
 
+function buscarTicketsPorDescripcion($busqueda)
+{
+	// Incluyo los parámetros de conexión y creo el objeto PDO
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+
+	// Crear la consulta SQL para buscar coincidencias en la descripción usando LIKE
+	$sql = "SELECT tickets.*, usuarios.nombre AS nombre_empleado
+            FROM tickets
+            JOIN usuarios ON tickets.id_usu = usuarios.id
+            WHERE tickets.descripcion LIKE :busqueda";
+
+	// Preparar la consulta
+	$stmt = $bd->prepare($sql);
+	if ($stmt === false) {
+		die("Error en la preparación de la consulta: " . $bd->errorInfo()[2]);
+	}
+
+	// Vincular el parámetro de búsqueda con comodines para LIKE
+	$busqueda_param = '%' . $busqueda . '%';
+	$stmt->bindParam(':busqueda', $busqueda_param, PDO::PARAM_STR);
+
+	// Ejecutar la consulta
+	$stmt->execute();
+
+	// Obtener los resultados
+	$tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+	// Verificar si hay resultados
+	if ($tickets) {
+		return $tickets; // Devuelve los tickets encontrados
+	} else {
+		return []; // Devuelve un array vacío si no hay coincidencias
+	}
+}
+
+
 function actualizarEstadoTicket($idTicket, $nuevoEstado)
 {
 	// Incluyo los parámetros de conexión y creo el objeto PDO
@@ -174,7 +215,8 @@ function actualizarEstadoTicket($idTicket, $nuevoEstado)
 	}
 }
 
-function obtenerMensajesTicket($ticketId){
+function obtenerMensajesTicket($ticketId)
+{
 	// Incluyo los parámetros de conexión y creo el objeto PDO
 	// Conexión a la base de datos incluyendo los datos 
 	include "configuracion_bd.php";
@@ -199,13 +241,16 @@ function obtenerMensajesTicket($ticketId){
 }
 
 
-function letraUpper($cadena){
-$cadenaDev =strtoupper($cadena[0]).substr($cadena, 1);
-return $cadenaDev; 
-};
+function letraUpper($cadena)
+{
+	$cadenaDev = strtoupper($cadena[0]) . substr($cadena, 1);
+	return $cadenaDev;
+}
+;
 
-function crearMensaje($tickedId, $remitenteId, $contenido){
-// Incluyo los parámetros de conexión y creo el objeto PDO
+function crearMensaje($tickedId, $remitenteId, $contenido)
+{
+	// Incluyo los parámetros de conexión y creo el objeto PDO
 	// Conexión a la base de datos incluyendo los datos 
 	include "configuracion_bd.php";
 	$bd = new PDO(
