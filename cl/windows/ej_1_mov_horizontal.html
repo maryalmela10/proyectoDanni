@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let temp;
+        function mueve(){
+            document.getElementById("caja1").style.left=parseInt(document.getElementById("caja1").style.left)+5+"px";
+            if(parseInt(document.getElementById("caja1").style.left)>=(window.innerWidth-150)){
+                document.getElementById("caja1").style.left="0px";
+            }
+        }
+        function gomueve(){
+            temp=setInterval(mueve,50);
+        }
+        function stop(){
+            clearInterval(temp);
+        }
+        function reanudar(){
+            gomueve();
+        }
+        window.onload=gomueve;
+    </script>
+</head>
+<style>
+    div{background-color: rgb(207, 207, 236);}
+</style>
+<body>
+        
+    <div id="caja1" style="position: absolute; top:160px; left:0px; width:150px">
+            Palabra moviendose    
+    </div>
+    <button onclick="stop()">DETENER</button>
+    <button onclick="reanudar()">REANUDAR</button>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ejemplo de JavaScript</title>
+  <meta charset="UTF-8">
+</head>
+<body>
+<script>
+  var cantpares=0;
+  var cantimpares=0;
+  var valor;
+  for(x=1;x<6;x++)
+  {
+    do{
+	valor=prompt('Ingrese valor '+x+':','');
+	}while(isNaN(valor)|| (valor%1!=0));
+	valor=parseInt(valor); 
+ 
+    if (valor%2==0)
+    {
+      cantpares=cantpares+1;
+    }
+    else
+    {
+      cantimpares=cantimpares+1;
+    }
+  }
+  document.write('Cantidad de valores pares:'+cantpares);
+  document.write('<br>');
+  document.write('Cantidad de valores impares:'+cantimpares);
+</script>
+</body>
+</html>
+<!--Desarrollar un programa que permita cargar 5 números enteros y luego nos informe cuántos valores fueron pares y cuántos impares.

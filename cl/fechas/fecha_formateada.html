@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fecha formateada</title>
+</head>
+
+<body>
+    
+    <p>la fecha de hoy es <span id="fecha"></span></p>
+    <p>la hora exacta de hoy es <span id="hora"></span></p>
+    <p>Hoy es un <span id="dia"></span> estupendo del mes de <span id ="mes"></span></p>
+   
+    <script>
+        fecha=new Date();
+        let f = new Date().toLocaleDateString('es-Es');
+        document.getElementById("fecha").innerHTML = f;
+        const h = new Date().toLocaleTimeString();
+        document.getElementById("hora").innerHTML= h;
+        let d = new Date().toLocaleDateString('es-Es',{weekday: "long"});
+        document.getElementById("dia").innerHTML= d;
+        let m = new Date().toLocaleDateString('es-Es',{month: "long"});
+        document.getElementById("mes").innerHTML= m;
+
+        //restar dos meses con la funciones de date creando variables es mas eficaz
+        var fecha1 = new Date(fecha);
+        fecha1.setMonth(fecha1.getMonth()-2);
+        mes = fecha1.toLocaleDateString('es-ES', {month:"long"});
+        dia = fecha1.toLocaleDateString('es-ES',{weekday:"long"});
+        document.write("Hace dos meses era " + dia + " "+fecha1.getDate()+ " de " +mes);
+        //aumentar 15 días creando varibles
+        var fecha2 = new Date(fecha);
+        fecha2.setDate(fecha.getDate()+15);
+        dia = fecha2.toLocaleDateString('es-ES', {weekday:"long"});
+        mes = fecha2.toLocaleDateString('es-ES',{month:"long"});
+        document.write("<br>Dentro de 15 dias será " +dia+" "+ fecha2.getDate()+ " de "+ mes);
+
+
+    </script>
+</body>
+</html>

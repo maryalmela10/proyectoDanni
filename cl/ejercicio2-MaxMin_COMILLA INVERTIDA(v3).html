@@ -1,0 +1,25 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+//las comillas invertidas permiten escribir cadenas multilinea sin necesidad de concatenar
+var myWindow;
+var posX=(screen.availWidth-200)/2;
+var posY=(screen.availHeight-200)/2;
+myWindow=window.open('','','width=200px,height=200px,top='+posY+', left=' + posX);
+myWindow.document.write(`
+<script>
+	function maximiza(){this.resizeTo(screen.availWidth,screen.availHeight);this.moveTo(0,0)}
+    function minimiza(){this.resizeTo(200,200);this.moveTo((screen.availWidth-200)/2,(screen.availHeight-200)/2)}
+<\/script>
+<body>
+<p>Esta es 'myWindow'</p>
+<input type='button' value='Maximiza' onClick='maximiza()'>
+<input type='button' value='Minimiza' onClick='minimiza()'>
+</body>
+`);
+</script>
+</body>
+</html>
+

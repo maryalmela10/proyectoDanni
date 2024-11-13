@@ -1,0 +1,38 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>multiplos </title>
+    <SCRIPT LANGUAGE="Javascript">
+        var cont5 = 0;
+			for (var i = 5; i <= 300; i++) {
+				if(i % 5 == 0){
+					
+                    document.write(i+'-');
+					cont5++;
+                    
+				}	
+			}
+          
+			document.write('numeros multiplos de 5 es ' + cont5 + '<br>');
+            document.write('<br>');  
+    
+            var producto;
+            producto=prompt("introduce el numero a multiplicar")
+            while(isNaN(producto)|| producto%1!=0){
+                alert("no es válido")
+                producto=prompt("introduce el numero a multiplicar")
+            }
+            for (var i = 0; i <= 10; i++){
+            
+                document.write(+i+'x'+producto+'='+i*producto+'<br>')
+                }
+            
+            
+    
+    </SCRIPT>
+ </head>
+ <body>
+ </body>
+ </html>

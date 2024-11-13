@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media postivo y negativos</title>
+</head>
+<body>
+    <h1>Media postivo y negativos</h1>
+    <script>
+        function cargarArray(){
+            let numeros = [];
+
+            for( let i = 0; i<10;i++ ){
+                let numero=parseFloat(prompt("Introduce el nº " + (i + 1) + " : "));
+                numeros.push(numero);
+            }
+            return numeros;
+        }
+         function calcularMedia(numeros){
+                let calcularMedia=0;
+                let sumaNegativos=0;
+                let sumaPositivos=0;
+                let cuentaNegativos=0;
+                let cuentaPositivos=0;
+
+                for (let i=0; i<numeros.length;i++){
+
+                    if(numeros[i]>0){
+                        sumaPositivos+=numeros[i];
+                        cuentaPositivos++;
+
+                    }else if(numeros[i]<0){
+                        sumaNegativos+=numeros[i];
+                        cuentaNegativos++;
+                    }
+
+                }
+                let mediaPositivos = sumaPositivos / (cuentaPositivos || 1);
+                let mediaNegativos = sumaNegativos / (cuentaNegativos || 1);
+                
+                //mostrar el resultado
+                document.write("Media de nºs positivos " + mediaPositivos + "<br>");
+                document.write("Media de nºs negativos" + mediaNegativos + "<br>");
+
+         }
+         
+        
+        function calculaMayorMenor(numeros){
+                let menor = numeros [0];
+                let mayor = numeros [0];
+                for(let i =1;i<numeros.length;i++){
+                    if(numeros[i]<menor){
+                       menor=numeros[i]; 
+                    }
+                    if(numeros[i]>mayor){
+                        mayor=numeros[i];
+                    }
+                }
+            document.write("Nº mayor: " +mayor+ "<br>");
+            document.write("Nº menor: " +menor+ "<br>");
+        }
+        let numeros =cargarArray();
+        document.write("Números " + numeros.join(",") + "<br>");
+        calcularMedia(numeros);
+        calculaMayorMenor(numeros);
+
+    </script>
+</body>
+</html>

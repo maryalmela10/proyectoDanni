@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrays dos dimensiones</title>
+
+</head>
+<body>
+
+    <script>
+        //creamos una función para generar un numero aleatorio entre 0 y 9
+        function numeroAleatorio(){
+            return Math.floor(Math.random()*10);
+        }
+        //creamos el array de 3x4 
+        let array=[];
+        //bucle para crear 3 filas
+        for(let i=0; i<3; i++){
+            let row= [];
+            //ste bucle es para crear 4 columnas
+            for(let j=0; j<4; j++){
+                row.push(numeroAleatorio());
+            }
+            array.push(row);
+        }
+        //creamos la tabla html
+        let table='<table border= "1">';
+            //Para cada fila, añadimos una etiqueta <tr> (fila de tabla).
+            for (let i= 0; i< array.length; i++){
+                table += '<tr>';
+                //Para cada elemento, creamos una celda <td> con el número
+                    for(let j= 0; j<array[i].length; j++){
+                        table += '<td>' + array[i][j]+ '</td>';
+                    }
+                    table += '</tr>'; 
+            }
+            //Finalmente, cerramos la tabla con </table>
+            table += '</table>';
+            //Esta línea inserta la tabla HTML generada en el cuerpo del documento
+            document.body.innerHTML = table;
+    </script>
+        <p>Generar un array de 3 filas x 4 columnas con números generados 
+            aleatoriamente entre 0 y 9, y posteriormente visualizar el array.</p>
+</body>
+</html>

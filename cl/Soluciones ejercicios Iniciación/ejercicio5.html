@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ejemplo de JavaScript</title>
+  <meta charset="UTF-8">
+</head>
+<body>
+<script>
+  var sobres=0;
+  var notables=0;
+  var aprobados=0;
+  var suspensos=0;
+ for(x=0;x<10;x++)
+  {
+    var nota;
+    do{
+	nota=prompt('Ingrese nota','');
+    nota=parseInt(nota);
+	}while((isNaN(nota)) || (nota<0) || (nota>10) );
+	
+    if (nota>=9)
+    {
+      sobres=sobres+1;
+    }
+    else if(nota>=7){
+		notables=notables+1;
+	}else if (nota >=5 ){
+		aprobados=aprobados+1;
+    }else {
+      suspensos=suspensos+1;
+    }
+  }
+  document.write('Cantidad de alumnos con sobresaliente:'+sobres);
+  document.write('<br>Cantidad de alumnos con notables:'+notables);
+  document.write('<br>Cantidad de alumnos con aprobados:'+aprobados);
+  document.write('<br>Cantidad de alumnos con suspensos:'+suspensos);  
+</script>
+
+</body>
+</html>
+<!--Escribir un programa que lea 10 notas de alumnos y nos informe cuántos alumnos tienen sobresaliente, notable, aprobado y suspenso-->

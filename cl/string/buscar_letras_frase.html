@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar letras</title>
+</head>
+
+<body>
+    <h1>CONTANDO CARACTERES</h1>
+    <script>
+
+        // Recoge la frase que introduce
+                let entrada = prompt("Ingresa frase");
+        //creamos funcion para contar caracteres
+            function contarCaracteres(entrada){
+                //creamos constante para convertir en mayúsculas
+                const convMayus = entrada.toUpperCase();
+                //define las letras que vamos a contar
+                const patron = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+                //variable donde guardamos el resultado
+                let resultado = '';
+
+//longitud de la frase con espacios
+                let longConEspa = convMayus.length;
+//longitud de la frase sin espacios usando replace y la expresión regular expresión regular
+/* 
+'/': Delimita el inicio y el final de la expresión regular.
+\s: Es un carácter especial en regex que representa cualquier espacio en blanco (espacio, tabulación, salto de línea, etc.).
+g: Es una bandera (flag) que significa "global". Hace que la búsqueda sea en toda la cadena, no solo en la primera coincidencia.
+'': Es una cadena vacía, que es con lo que se reemplazarán los espacios encontrados.*/
+                let longSinEspa = convMayus.replace(/\s/g,'').length;
+
+
+
+        //el bucle recorre cada posición del abecedario patron
+                for (let i=0; i<patron.length; i++){
+                    //obtiene la letra en la posicion i del patron
+                    let letra = patron[i];
+                    let contador = 0;
+                    //bucle para recorrer cada posición de la frase 
+                        for(let j=0; j<convMayus.length;j++){
+                            if(convMayus[j] === letra){
+                                contador++;
+                            }
+                        }
+                    resultado += letra + '->' + contador + '<br>'; 
+                }
+                //mostramos el resultado llamando a la variable resultado
+                document.write('Frase convertida a mayúsculas ' +convMayus + '<br>');
+                document.write('Conteo de caracteres '+ '<br>'+ resultado );
+                document.write('longitud de frase con espacios '+longConEspa + '<br>');
+                document.write('Longitud sin espacios '+ longSinEspa+'<br>');
+               
+            }
+            //llamar a la funcion
+            contarCaracteres(entrada);
+        </script> 
+        
+</body>
+</html>

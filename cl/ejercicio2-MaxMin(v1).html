@@ -1,0 +1,30 @@
+<html>
+<head>
+<script>
+var myWindow;
+function maximiza()
+{
+myWindow.moveTo(0,0);
+myWindow.resizeTo(screen.availWidth,screen.availHeight);
+}
+function minimiza()
+{
+myWindow.resizeTo(200,200);
+myWindow.moveTo(posX,posY);
+}
+</script>
+</head>
+<body>
+<script>
+var posX=(screen.availWidth)/2-100;
+var posY=(screen.availHeight)/2-100;
+
+myWindow=window.open('','','width=200,height=200,top='+posY+', left=' + posX);
+myWindow.document.write("<p>Esta es 'myWindow'</p>");
+myWindow.document.write("<input type='button' value='Maximiza' onClick='window.opener.maximiza()'>")
+myWindow.document.write("<input type='button' value='Minimiza' onClick='window.opener.minimiza()'>")
+
+
+</script>
+</body>
+</html>

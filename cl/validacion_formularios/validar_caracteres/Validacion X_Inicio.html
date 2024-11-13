@@ -1,0 +1,15 @@
+<html>
+<head>
+<script type="text/javascript">
+function valida(){
+valor = document.getElementById("texto").value
+if( !(/^X/.test(valor)) ) 
+	{alert("error");return false;}
+return true;
+}
+</script>
+</head>
+<form onsubmit="return valida()">
+Texto:<input type="text" name="texto" id="texto">
+<br><input type="submit" value="Enviar">
+</html>

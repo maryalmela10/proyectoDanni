@@ -1,0 +1,25 @@
+<HTML>
+    <HEAD>
+     <SCRIPT LANGUAGE="Javascript">
+      
+         var veces,puntos=3,total=100;
+         var nombre,auxLog;
+         nombre=prompt("Introduce tu nombre","");
+         veces=prompt("¿Cuantas veces has entrado aquí","");
+         auxLog=(nombre=="Ana");
+         alert("¿Eres Ana?="+auxLog);
+         veces=parseInt(veces);
+         veces+=1;
+         puntos=++veces;
+         total=total+puntos+veces;
+         auxLog=(nombre=="Pedro")&&(veces==3);
+         alert ("El valor total es "+total+"\n¿Eres Pedro y has entrado 3 veces?:"+auxLog);
+
+     </SCRIPT>
+    </HEAD>
+    <BODY>
+    </BODY>
+    </HTML>
+
+
+
