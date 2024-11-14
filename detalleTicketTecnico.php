@@ -1,7 +1,7 @@
 <?php
 require_once 'bd.php';
 session_start();
-if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "1") {
+if (!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "1") {
     header("Location: login.php");
     exit();
 }
@@ -17,7 +17,7 @@ if (!$ticketId) {
 
 // Procesar POST si existe
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if(isset($_POST['opcionesEstado']) && !empty($_POST['opcionesEstado'])) {
+    if (isset($_POST['opcionesEstado']) && !empty($_POST['opcionesEstado'])) {
         $nuevoEstado = $_POST['opcionesEstado'];
         actualizarEstadoTicket($ticketId, $nuevoEstado);
     }
@@ -34,6 +34,7 @@ if (!$ticket) {
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,6 +49,7 @@ if (!$ticket) {
             margin: 0;
             background-color: #001f3f;
         }
+
         .ticket-container {
             background-color: #ffffff;
             padding: 30px;
@@ -55,23 +57,29 @@ if (!$ticket) {
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             width: 400px;
         }
+
         h2 {
             text-align: center;
             color: #003366;
         }
+
         .ticket-info {
             margin-bottom: 20px;
         }
+
         .ticket-info p {
             margin: 10px 0;
         }
+
         .label {
             font-weight: bold;
             color: #003366;
         }
+
         .value {
             margin-left: 10px;
         }
+
         .back-link {
             display: block;
             text-align: center;
@@ -82,24 +90,29 @@ if (!$ticket) {
             background-color: #e0e0e0;
             border-radius: 4px;
         }
+
         .back-link:hover {
             background-color: #d0d0d0;
         }
+
         .messages {
             margin-top: 20px;
             border-top: 1px solid #003366;
             padding-top: 20px;
         }
+
         .message {
             background-color: #f0f0f0;
             border-radius: 4px;
             padding: 10px;
             margin-bottom: 10px;
         }
+
         .message-date {
             font-size: 0.8em;
             color: #666;
         }
+
         .button {
             display: block;
             background-color: #003366;
@@ -110,24 +123,43 @@ if (!$ticket) {
             float: right;
             text-align: center;
         }
+
         .button:hover {
             background-color: #002244;
         }
-        .derecha{
-            float: right;
+
+        .derecha {
+            position: absolute;
+            top: 38%;
+            left: 53.13%;
+        }
+
+        .file-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .file-link:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
+
 <body>
     <div class="ticket-container">
         <h2>Detalles del Ticket</h2>
-        <?php if(!empty($mensaje)): ?>
+        <?php if (!empty($mensaje)): ?>
             <p><?php echo $mensaje; ?></p>
         <?php endif; ?>
         <div class="ticket-info">
             <p><span class="label">ID:</span> <span class="value"><?php echo htmlspecialchars($ticket['id']); ?></span></p>
             <p><span class="label">Asunto:</span> <span class="value"><?php echo htmlspecialchars($ticket['asunto']); ?></span></p>
-            <p><span class="label">Estado:</span> 
+            <p><span class="label">Estado:</span>
             <form action="detalleTicketTecnico.php?id=<?php echo $ticketId; ?>" method="POST">
                 <input type="hidden" name="ticket_id" value="<?php echo $ticketId; ?>">
                 <select id="opciones" name="opcionesEstado">
@@ -140,9 +172,14 @@ if (!$ticket) {
             </form>
             <p><span class="label">Descripción:</span></p>
             <p class="value"><?php echo nl2br(htmlspecialchars($ticket['descripcion'])); ?></p>
+            <?php
+            if (!empty($ticket['archivo_adjunto'])) {
+                echo '<p><a href="ficherosUsuarios/' . htmlspecialchars($ticket['archivo_adjunto']) . '" class="file-link" download>Descargar archivo</a></p>';
+            }
+            ?>
         </div>
         <div class="messages">
-        <a href="enviar_mensaje.php?ticket_id=<?php echo $ticketId; ?>" class="button">Enviar Mensaje</a>
+            <a href="enviar_mensaje.php?ticket_id=<?php echo $ticketId; ?>" class="button">Enviar Mensaje</a>
             <h3>Mensajes</h3>
             <?php
             $mensajes = obtenerMensajesTicket($ticketId); // Asegúrate de implementar esta función
@@ -163,4 +200,5 @@ if (!$ticket) {
         <a href="paginaTecnico.php" class="back-link">Volver a Mis Tickets</a>
     </div>
 </body>
+
 </html>
