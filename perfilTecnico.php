@@ -1,28 +1,16 @@
 <?php
-session_start();
+session_start(); // Inicia la sesión
 
-if (isset($_SESSION['logueado']) && $_SESSION['logueado'] == 1) {
-        header("Location: login.php");
-        exit();
-        require_once 'bd.php';
+// Verificar si el usuario está logueado y si es un técnico (rol 1)
+if (!isset($_SESSION["email"]) || $_SESSION["logueado"] != 1) {
+    // Si no está logueado o no es un técnico, redirigir al login
+    header("Location: login.php?redirigido=true");
+    exit();
 }
-    // Obtener el correo electrónico del técnico desde la sesión
-    $usuario_email = $_SESSION['nombre'];
-        // Consultar la base de datos para obtener los detalles del técnico
 
-        // Crear la conexión
-        $bd = new PDO(
-            "mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
-            $bd_config["usuario"],
-            $bd_config["clave"]
-        );
-        $bd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        // Consultar la base de datos para obtener los detalles del técnico
-        $sql = "SELECT * FROM usuarios WHERE email = :email";
-        $stmt = $bd->prepare($sql);
-        $stmt->execute([':email' => $usuario_email]);
-        $usuario = $stmt->fetch();
-        
+// Los datos del usuario ya están en la sesión, no es necesario hacer una consulta a la base de datos
+$nombre = $_SESSION["nombre"];
+$email = $_SESSION["email"];
 ?>
     <!DOCTYPE html>
     <html lang="es">
@@ -31,8 +19,7 @@ if (isset($_SESSION['logueado']) && $_SESSION['logueado'] == 1) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Perfil del Técnico</title>
         <style>
-        /* Estilos básicos */
-        body {
+body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -55,10 +42,41 @@ if (isset($_SESSION['logueado']) && $_SESSION['logueado'] == 1) {
             right: 30px;
             color: #003366;
             text-decoration: none;
-            font-weight: bold;    
-            background-color:white;  
-            padding:10px; 
-            border-radius:10px 10px;     
+            font-weight: bold;
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        nav {
+            background-color: #004080;
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li {
+            display: inline;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        nav ul li a {
+            color: #003366;
+            background-color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            padding: 20px;
+        }
+        a:hover {
+            background-color: #d9d9d9; /* Cambia el color al pasar el mouse */
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .logout-button {
             position: fixed;
@@ -81,13 +99,19 @@ if (isset($_SESSION['logueado']) && $_SESSION['logueado'] == 1) {
             <div>
                 <a href="perfilTecnico.php" class="perfil-link">Perfil</a>
             </div>
-            <div class="container">
-            <h1>Perfil del Técnico</h1>
-            <p><strong>Nombre:</strong> <?php echo htmlspecialchars($usuario['nombre']); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($usuario['email']); ?></p>
-            <p><a href="paginaTecnico.php">Volver a Tickets</a></p>
+            <div class="container content">
+                 <h1>Perfil del Técnico</h1>
+                 <p>Bienvenido/a, <?php echo htmlspecialchars($_SESSION["nombre"]); ?>.</p>
             </div>
         </header>
+        <div class=container>
+            <div class="content">
+                <p><strong>Nombre:</strong> <?php echo htmlspecialchars($nombre); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
+            </div>
+            <p><a href="paginaTecnico.php">Volver a Tickets</a></p>
+        </div>    
+        
         <!-- Botón de cerrar sesión -->
         <form action="cerrarSesion.php" method="post">
             <button type="submit" class="logout-button">Cerrar Sesión</button>

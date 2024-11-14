@@ -5,7 +5,8 @@ session_start(); // Inicia la sesión
 if (!isset($_SESSION["email"])) {
     // Si no está logueado, redirigir al login
     header("Location: login.php?redirigido=true");
-    exit(); // Asegúrate de detener la ejecución de la página después de la redirección
+    exit(); 
+    // Asegúrate de detener la ejecución de la página después de la redirección
 }
 
 // Aquí, puedes obtener los detalles del usuario de la base de datos si es necesario
@@ -100,20 +101,12 @@ if (!isset($_SESSION["email"])) {
         <div>
             <a href="perfil.php" class="perfil-link">Perfil</a>
         </div>
-        <div class="container">
-            <h1>Sistema de Tickets</h1>
+        <div class="container content">
+            <h1>Perfil de empleado</h1>
             <p>Bienvenido/a, <?php echo htmlspecialchars($_SESSION["nombre"]); ?>.</p>
         </div>
     </header>
     
-    <nav>
-        <div class="container">
-            <ul>
-                <li><a href="crearTickets.php">Crear Nuevo Ticket</a></li>  
-                <!-- Aquí puedes agregar más enlaces si es necesario -->
-            </ul>
-        </div>
-    </nav>
 
     <div class="container">
         <div class="content">
@@ -122,6 +115,7 @@ if (!isset($_SESSION["email"])) {
             <p><strong>Email:</strong> <?php echo isset($_SESSION["email"]) ? htmlspecialchars($_SESSION["email"]) : 'No disponible'; ?></p>
             <!-- Aquí puedes agregar más detalles si es necesario -->
         </div>
+        <p><a href="DprincipalSesiones.php">Volver a Tickets</a></p>
     </div>
 
     <!-- Botón de cerrar sesión -->

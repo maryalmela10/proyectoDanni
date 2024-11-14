@@ -102,7 +102,7 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
     <body>
         <header>
             <div>
-            <a href="perfil.php" class="perfil-link">Perfil</a>
+            <a href="perfilTecnico.php" class="perfil-link">Perfil</a>
             </div>
             <div class="container">
                 <h1>Tickets de Empleados</h1>
