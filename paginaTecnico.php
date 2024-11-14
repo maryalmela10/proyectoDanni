@@ -20,83 +20,83 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Paginal Principal tenico - Tickets de Empleados</title>
         <style>
-            body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-            }
-            nav {
-            background-color: #004080;
-            padding: 10px 0;
-            }
-
-            h1 {
-                color: #00c0ff;
-                /* Azul claro para el título */
-            }
-            .perfil-link {
-            position: absolute;
-            top: 10px;
-            right: 30px;
-            color: #003366;
-            text-decoration: none;
-            font-weight: bold;    
-            background-color:white;  
-            padding:10px; 
-            border-radius:10px 10px;     
-           }
-           .container {
-            color: #003366;
-            width: 80%;
-            margin: 0 auto;
-            padding: 20px;
-            }
-            header {
-                background-color: #003366;
-                color: white;
-                padding: 10px 0;
-                
-            }
-            table {
-                width: 100%;
-                max-width: 800px;
-                border-collapse: collapse;
-                background-color: #ffffff;
-                color: #333333;
-                margin-top: 20px;
-            }
-
-            th,
-            td {
-                padding: 10px;
-                text-align: left;
-                border-bottom: 1px solid #ddd;
-            }
-
-            th {
-                background-color: #003366;
-                color: #ffffff;
-            }
-
-            tr:hover {
-                background-color: #f2f2f2;
-            }
-            .logout-button {
-            position: fixed; /* Fija el botón en la pantalla */
-            bottom: 20px; /* Espaciado desde abajo */
-            right: 20px; /* Espaciado desde la derecha */
-            padding: 10px 15px; /* Espaciado interno */
-            background-color: #ff4d4d; /* Color de fondo rojo */
-            color: white; /* Color del texto */
-            border: none; /* Sin borde */
-            border-radius: 5px; /* Bordes redondeados */
-            cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-        }
-        .logout-button:hover {
-            background-color: #ff1a1a; /* Color más oscuro al pasar el mouse */
-        }
-
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+    }
+    .container {
+        color: #003366;
+        width: 80%;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    header {
+        background-color: #003366;
+        color: white;
+        padding: 10px 0;
+    }
+    .perfil-link {
+        position: absolute;
+        top: 10px;
+        right: 30px;
+        color: #003366;
+        text-decoration: none;
+        font-weight: bold;
+        background-color: white;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    h1, p {
+        margin: 0;
+        color: white;
+    }
+    .content {
+        background-color: white;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        color: #333333;
+        margin-top: 20px;
+        table-layout: fixed; /* Ajusta el ancho de cada columna */
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        font-size: 14px;
+    }
+    th {
+        background-color: #003366;
+        color: #ffffff;
+    }
+    tr:hover {
+        background-color: #f2f2f2;
+    }
+    .logout-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .logout-button:hover {
+        background-color: #ff1a1a;
+    }
         </style>
     </head>
     <body>
@@ -110,16 +110,15 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
             </div>
         </header>
         
-        <nav>
-            <div class="container">
-                <!-- Formulario de búsqueda -->
-        <form method="POST" action="" class="search-bar">
-            <input type="text" name="busqueda" placeholder="Buscar por descripción"
-                value="<?php echo htmlspecialchars($busqueda); ?>">
-            <button type="submit">Buscar</button>
-        </form>
-            </div>
         
+        <div class="container content">
+                <!-- Formulario de búsqueda -->
+            <form method="POST" action="" class="search-bar">
+                <input type="text" name="busqueda" placeholder="Buscar por descripción"
+                    value="<?php echo htmlspecialchars($busqueda); ?>">
+                <button type="submit">Buscar</button>
+            </form>
+                    
         <?php if (is_array($tickets) && !empty($tickets)): ?>
             <table>
                 <tr>
@@ -146,10 +145,11 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
                     </tr>
                 <?php endforeach; ?>
             </table>
-        <?php else: ?>
-            <p>No hay tickets que coincidan con la búsqueda.</p>
-        <?php endif; ?>
-        </nav>
+            <?php else: ?>
+                <p>No hay tickets que coincidan con la búsqueda.</p>
+            <?php endif; ?>
+        </div>
+        
 
         <!-- Botón de cerrar sesión -->
         <form action="cerrarSesion.php" method="post">
