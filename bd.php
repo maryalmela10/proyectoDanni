@@ -131,9 +131,6 @@ function verificarEmailEmpresa($email)
 		return -1;
 	}
 }
-
-
-
 function comprobar_usuario($nombre, $clave)
 {
 	// Incluyo los parámetros de conexión y creo el objeto PDO

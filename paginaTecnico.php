@@ -15,29 +15,49 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
     ?>
     <!DOCTYPE html>
     <html lang="es">
-
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tickets de Empleados</title>
+        <title>Paginal Principal tenico - Tickets de Empleados</title>
         <style>
             body {
-                font-family: Arial, sans-serif;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin: 0;
-                padding: 20px;
-                background-color: #001f3f;
-                /* Fondo azul oscuro */
-                color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            }
+            nav {
+            background-color: #004080;
+            padding: 10px 0;
             }
 
             h1 {
                 color: #00c0ff;
                 /* Azul claro para el título */
             }
-
+            .perfil-link {
+            position: absolute;
+            top: 10px;
+            right: 30px;
+            color: #003366;
+            text-decoration: none;
+            font-weight: bold;    
+            background-color:white;  
+            padding:10px; 
+            border-radius:10px 10px;     
+           }
+           .container {
+            color: #003366;
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            }
+            header {
+                background-color: #003366;
+                color: white;
+                padding: 10px 0;
+                
+            }
             table {
                 width: 100%;
                 max-width: 800px;
@@ -62,45 +82,44 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
             tr:hover {
                 background-color: #f2f2f2;
             }
-
             .logout-button {
-                position: fixed;
-                /* Fija el botón en la pantalla */
-                bottom: 20px;
-                /* Espaciado desde abajo */
-                right: 20px;
-                /* Espaciado desde la derecha */
-                padding: 10px 15px;
-                /* Espaciado interno */
-                background-color: #ff4d4d;
-                /* Color de fondo rojo */
-                color: white;
-                /* Color del texto */
-                border: none;
-                /* Sin borde */
-                border-radius: 5px;
-                /* Bordes redondeados */
-                cursor: pointer;
-                /* Cambia el cursor al pasar sobre el botón */
-            }
+            position: fixed; /* Fija el botón en la pantalla */
+            bottom: 20px; /* Espaciado desde abajo */
+            right: 20px; /* Espaciado desde la derecha */
+            padding: 10px 15px; /* Espaciado interno */
+            background-color: #ff4d4d; /* Color de fondo rojo */
+            color: white; /* Color del texto */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+        }
+        .logout-button:hover {
+            background-color: #ff1a1a; /* Color más oscuro al pasar el mouse */
+        }
 
-            .logout-button:hover {
-                background-color: #ff1a1a;
-                /* Color más oscuro al pasar el mouse */
-            }
         </style>
     </head>
-
     <body>
-        <h1>Tickets de Empleados</h1>
-
-        <!-- Formulario de búsqueda -->
+        <header>
+            <div>
+            <a href="perfil.php" class="perfil-link">Perfil</a>
+            </div>
+            <div class="container">
+                <h1>Tickets de Empleados</h1>
+                <p>Bienvenido/a tecnico: <?php echo htmlspecialchars($_SESSION["nombre"]); ?></p>
+            </div>
+        </header>
+        
+        <nav>
+            <div class="container">
+                <!-- Formulario de búsqueda -->
         <form method="POST" action="" class="search-bar">
             <input type="text" name="busqueda" placeholder="Buscar por descripción"
                 value="<?php echo htmlspecialchars($busqueda); ?>">
             <button type="submit">Buscar</button>
         </form>
-
+            </div>
+        
         <?php if (is_array($tickets) && !empty($tickets)): ?>
             <table>
                 <tr>
@@ -130,6 +149,7 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "1") {
         <?php else: ?>
             <p>No hay tickets que coincidan con la búsqueda.</p>
         <?php endif; ?>
+        </nav>
 
         <!-- Botón de cerrar sesión -->
         <form action="cerrarSesion.php" method="post">

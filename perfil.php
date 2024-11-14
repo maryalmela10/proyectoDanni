@@ -1,18 +1,25 @@
 <?php
-session_start();
-if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
-    header("Location: login.php");
-    exit();
+session_start(); // Inicia la sesión
+
+// Verificar si el usuario está logueado
+if (!isset($_SESSION["email"])) {
+    // Si no está logueado, redirigir al login
+    header("Location: login.php?redirigido=true");
+    exit(); // Asegúrate de detener la ejecución de la página después de la redirección
 }
+
+// Aquí, puedes obtener los detalles del usuario de la base de datos si es necesario
+// Por ejemplo, si ya tienes la sesión iniciada y el nombre del usuario almacenado
+// en la sesión, puedes acceder a él directamente.
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Principal - Sistema de Tickets </title>
+    <title>Perfil de Usuario</title>
     <style>
-
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -29,7 +36,6 @@ if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
             background-color: #003366;
             color: white;
             padding: 10px 0;
-            
         }
         .perfil-link {
             position: absolute;
@@ -37,10 +43,10 @@ if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
             right: 30px;
             color: #003366;
             text-decoration: none;
-            font-weight: bold;    
-            background-color:white;  
-            padding:10px; 
-            border-radius:10px 10px;     
+            font-weight: bold;
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
         }
         nav {
             background-color: #004080;
@@ -53,7 +59,7 @@ if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
         }
         nav ul li {
             display: inline;
-            font-weight:bold;
+            font-weight: bold;
             margin-right: 20px;
         }
         nav ul li a {
@@ -63,7 +69,7 @@ if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
             text-decoration: none;
             padding: 20px;
         }
-         a:hover {
+        a:hover {
             background-color: #d9d9d9; /* Cambia el color al pasar el mouse */
         }
         .content {
@@ -73,53 +79,55 @@ if(!isset($_SESSION["logueado"]) || $_SESSION["logueado"] != "0") {
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .hidden {
-            display: none;
-        }
         .logout-button {
-            position: fixed; /* Fija el botón en la pantalla */
-            bottom: 20px; /* Espaciado desde abajo */
-            right: 20px; /* Espaciado desde la derecha */
-            padding: 10px 15px; /* Espaciado interno */
-            background-color: #ff4d4d; /* Color de fondo rojo */
-            color: white; /* Color del texto */
-            border: none; /* Sin borde */
-            border-radius: 5px; /* Bordes redondeados */
-            cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
         .logout-button:hover {
-            background-color: #ff1a1a; /* Color más oscuro al pasar el mouse */
+            background-color: #ff1a1a;
         }
     </style>
 </head>
 <body>
     <header>
         <div>
-        <a href="perfil.php" class="perfil-link">Perfil</a>
+            <a href="perfil.php" class="perfil-link">Perfil</a>
         </div>
         <div class="container">
             <h1>Sistema de Tickets</h1>
-            <p>Bienvenido/a empleado: <?php echo htmlspecialchars($_SESSION["nombre"]); ?></p>
+            <p>Bienvenido/a, <?php echo htmlspecialchars($_SESSION["nombre"]); ?>.</p>
         </div>
     </header>
     
     <nav>
         <div class="container">
             <ul>
-                <li><a href="crearTickets.php">Crear Nuevo Ticket</a></li>            
-                
+                <li><a href="crearTickets.php">Crear Nuevo Ticket</a></li>  
+                <!-- Aquí puedes agregar más enlaces si es necesario -->
             </ul>
         </div>
     </nav>
 
     <div class="container">
-        <div id="mis-tickets" class="content">
-            <?php include 'misTickets.php'; ?>
+        <div class="content">
+            <h2>Tu Perfil</h2>
+            <p><strong>Nombre:</strong> <?php echo htmlspecialchars($_SESSION["nombre"]); ?></p>
+            <p><strong>Email:</strong> <?php echo isset($_SESSION["email"]) ? htmlspecialchars($_SESSION["email"]) : 'No disponible'; ?></p>
+            <!-- Aquí puedes agregar más detalles si es necesario -->
         </div>
     </div>
+
     <!-- Botón de cerrar sesión -->
     <form action="cerrarSesion.php" method="post">
-                <button type="submit" class="logout-button">Cerrar Sesión</button>
+        <button type="submit" class="logout-button">Cerrar Sesión</button>
     </form>
+
 </body>
 </html>
