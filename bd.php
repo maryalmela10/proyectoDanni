@@ -80,7 +80,9 @@ function enviarCorreoActivacion($email, $token) {
 	$origen = "soporte@empresa.com";
 	$origenEtiqueta = "no-replay";
     $asunto = "Activa tu cuenta";
-	$cuerpo = "Haz clic en el siguiente enlace para activar tu cuenta: <a href='http://" . $_SERVER['HTTP_HOST'] ."/proyectoDanni/activar.php?email=" . urlencode($email) . "&token=". urlencode($token) ."'>Activar cuenta</a>";
+	$dominio = $_SERVER['HTTP_HOST'];
+    $subcarpeta = dirname($_SERVER['PHP_SELF']);
+	$cuerpo = "Haz clic en el siguiente enlace para activar tu cuenta: <a href='http://" . $dominio.$subcarpeta. "/activar.php?email=" . urlencode($email) . "&token=". urlencode($token) ."'>Activar cuenta</a>";
     enviarEmail($destino, $origen, $asunto, $cuerpo, $origenEtiqueta);
 }
 
@@ -134,7 +136,7 @@ function activar($email, $token){
 
 function verificarEmailEmpresa($email) {
     $patronSoporte = '/@soporte\.empresa\.com$/'; // Delimitador '/'
-    $patronEmpleado = '/@empleado\.empresa\.com$/'; // Delimitador '/'
+    $patronEmpleado = '/@empresa\.com$/'; // Delimitador '/'
 
     if (preg_match($patronSoporte, $email)) {
         return 1;
@@ -164,7 +166,9 @@ function comprobar_usuario($nombre, $clave)
     // Verifico si se encontró el usuario
     if ($stmt->rowCount() === 1) {
         $usuario = $stmt->fetch();
-
+		if($usuario['activo']==0){
+			return false; // usuarioInactivo
+		}
         // Verifico la contraseña
         if (password_verify($clave, $usuario['contraseña'])) {
             return $usuario; // Retorna los datos del usuario si la contraseña es correcta
