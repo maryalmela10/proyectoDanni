@@ -50,7 +50,7 @@ if (isset($_SESSION['logueado']) && $_SESSION['logueado'] == 1) {
             padding: 10px 0;
         }
         .perfil-link {
-            position: relative;
+            position: absolute;
             top: 10px;
             right: 30px;
             color: #003366;
