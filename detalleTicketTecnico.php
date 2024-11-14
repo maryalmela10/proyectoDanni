@@ -129,9 +129,7 @@ if (!$ticket) {
         }
 
         .derecha {
-            position: absolute;
-            top: 38%;
-            left: 53.13%;
+            float: right;
         }
 
         .file-link {
