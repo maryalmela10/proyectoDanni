@@ -1,17 +1,71 @@
 <?php
-session_start(); // Inicia la sesión
+session_start();
+require_once('bd.php');
 
-// Verificar si el usuario está logueado
-if (!isset($_SESSION["email"])) {
-    // Si no está logueado, redirigir al login
+if (!isset($_SESSION['id'])) {
     header("Location: login.php?redirigido=true");
-    exit(); 
-    // Asegúrate de detener la ejecución de la página después de la redirección
+    exit();
 }
 
-// Aquí, puedes obtener los detalles del usuario de la base de datos si es necesario
-// Por ejemplo, si ya tienes la sesión iniciada y el nombre del usuario almacenado
-// en la sesión, puedes acceder a él directamente.
+if ($_SERVER["REQUEST_METHOD"] == "GET" && $_SESSION["logueado"] == 0 && isset($_GET['id'])) {
+    header("Location: login.php?redirigido=true");
+    exit();
+}
+
+$tecnico = false;
+// Verificar si es un técnico y obtener datos del usuario
+if ($_SERVER["REQUEST_METHOD"] == "GET" && $_SESSION["logueado"] == 1 && isset($_GET['id'])) {
+    $tecnico = true;
+    $mostrar_formulario = 1;
+    $datosUsuario = datosPerfil($_GET['id']);
+    // Obtener los datos del usuario
+    if (!$datosUsuario) {
+        header("Location: login.php?redirigido=true");
+        exit();
+    } else {
+        $nombre = $datosUsuario["nombre"];
+        $email = $datosUsuario["email"];
+        $direccion = $datosUsuario['direccion'];
+        $telefono = $datosUsuario['telefono'];
+        $departamento = $datosUsuario['departamento'];
+    }
+} 
+
+if($_SESSION["logueado"] == 0){
+// Validar que el ID del usuario coincida con el de la sesión
+$id_usuario = $_SESSION['id']; 
+$datosUsuario = datosPerfil($id_usuario);
+if (!$datosUsuario) {
+    header("Location: login.php?redirigido=true"); 
+    exit();
+}
+
+// Asignar datos del usuario
+$nombre = $datosUsuario["nombre"];
+$email = $datosUsuario["email"];
+$direccion = $datosUsuario['direccion'];
+$telefono = $datosUsuario['telefono'];
+$departamento = $datosUsuario['departamento'];
+
+$mostrar_formulario = false;
+
+// Determina si se debe mostrar el formulario de edición
+$mostrar_formulario = isset($_POST['accion']) && $_POST['accion'] == 'editar';
+}
+// Procesar el formulario si se ha enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
+    $nombre = (empty($_POST['nombre']))? null : $_POST['nombre'];
+    $telefono = (empty($_POST['telefono']))? null : $_POST['telefono'];
+    $departamento = (empty($_POST['departamento']))? null : $_POST['departamento'];
+    $direccion = (empty($_POST['direccion']))? null : $_POST['direccion'];
+
+    // Llama a la función para actualizar el usuario
+    $actualizar = actualizarUsuario($id_usuario, $nombre, $direccion, $telefono, $departamento);
+    
+    // Redirige después de guardar
+    header("Location: perfil.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +73,7 @@ if (!isset($_SESSION["email"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario</title>
+    <title>Perfil del Técnico</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,30 +103,6 @@ if (!isset($_SESSION["email"])) {
             padding: 10px;
             border-radius: 10px;
         }
-        nav {
-            background-color: #004080;
-            padding: 10px 0;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        nav ul li {
-            display: inline;
-            font-weight: bold;
-            margin-right: 20px;
-        }
-        nav ul li a {
-            color: #003366;
-            background-color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            padding: 20px;
-        }
-        a:hover {
-            background-color: #d9d9d9; /* Cambia el color al pasar el mouse */
-        }
         .content {
             background-color: white;
             padding: 20px;
@@ -94,34 +124,106 @@ if (!isset($_SESSION["email"])) {
         .logout-button:hover {
             background-color: #ff1a1a;
         }
+        .edit-button, .save-button {
+            padding: 10px 15px;
+            background-color: #004080;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .edit-button:hover, .save-button:hover {
+            background-color: #002b55;
+        }
+        .cancel-link {
+            margin-left: 10px;
+            color: #003366;
+            text-decoration: none;
+        }
+        .foto {
+        width: 100px; /* Ajusta el tamaño según sea necesario */
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover; /* Asegura que la imagen no se deforme */
+        display: inline-block;
+        margin-right: 10px; /* Espacio entre la imagen y el texto */
+        vertical-align: middle;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div>
-            <a href="perfil.php" class="perfil-link">Perfil</a>
-        </div>
-        <div class="container content">
-            <h1>Perfil de empleado</h1>
-            <p>Bienvenido/a, <?php echo htmlspecialchars($_SESSION["nombre"]); ?>.</p>
-        </div>
-    </header>
-    
-
-    <div class="container">
-        <div class="content">
-            <h2>Tu Perfil</h2>
-            <p><strong>Nombre:</strong> <?php echo htmlspecialchars($_SESSION["nombre"]); ?></p>
-            <p><strong>Email:</strong> <?php echo isset($_SESSION["email"]) ? htmlspecialchars($_SESSION["email"]) : 'No disponible'; ?></p>
-            <!-- Aquí puedes agregar más detalles si es necesario -->
-        </div>
-        <p><a href="DprincipalSesiones.php">Volver a Tickets</a></p>
+<header>
+    <div>
+        <a href="perfilTecnico.php" class="perfil-link">Perfil</a>
+    </div>
+    <div class="container content">
+            <?php if (!empty($datosUsuario['foto_perfil'])): ?>
+            <img src="<?php echo htmlspecialchars($datosUsuario['foto_perfil']); ?>" alt="Foto de Perfil" class="foto">
+        <?php endif; ?>
+        <h1>Perfil de <?php echo htmlspecialchars($nombre)?></h1>
+        <p>Bienvenido/a</p>
+    </div>
+</header>
+<div class="container">
+    <div class="content">
+        <?php if ((!$mostrar_formulario && !$tecnico) || ($mostrar_formulario==1 && $tecnico)): ?>
+                <p><strong>Nombre:</strong> <?php echo htmlspecialchars($nombre); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
+                <p><strong>Dirección:</strong> <?php echo htmlspecialchars($direccion ?? 'No especificado'); ?></p>
+                <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($telefono ?? 'No especificado'); ?></p>
+                <p><strong>Departamento:</strong> <?php echo htmlspecialchars($departamento ?? 'No especificado'); ?></p>
+                <?php if (!$tecnico){ ?>
+                <form method="post">
+                    <input type="hidden" name="accion" value="editar">
+                    <button type="submit" class="edit-button">Modificar información</button>
+                </form>
+                <?php }; ?>
+        <?php else : ?>
+                <!-- Formulario de edición -->
+                <form method="post">
+                    <p>
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($nombre ?? ''); ?>">
+                    </p>
+                    <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
+                    <p>
+                        <label for="direccion">Dirección:</label>
+                        <input type="text" id="direccion" name="direccion" value="<?php echo htmlspecialchars($direccion ?? ''); ?>">
+                    </p>
+                    <p>
+                        <label for="telefono">Teléfono:</label>
+                        <input type="text" id="telefono" name="telefono" value="<?php echo htmlspecialchars($telefono ?? ''); ?>">
+                    </p>
+                    <p>
+                        <label for="departamento">Departamento:</label>
+                        <input type="text" id="departamento" name="departamento" value="<?php echo htmlspecialchars($departamento ?? ''); ?>">
+                    </p>
+                    <button type="submit" name="guardar" class="save-button">Guardar cambios</button>
+                    <a href="perfil.php" class="cancel-link">Cancelar</a>
+                </form>
+        <?php endif; ?>
+    </div>
+    <div class="content">
+        <form method="post" action="subir_imagenPerfil.php" enctype="multipart/form-data">
+        <label for="foto"><strong>Subir imagen de perfil:</strong></label>
+        <input type="file" id="foto" name="foto" accept="image/*" required>
+        <button type="submit" class="edit-button" >Subir Imagen</button>
+        </form>
     </div>
 
-    <!-- Botón de cerrar sesión -->
-    <form action="cerrarSesion.php" method="post">
-        <button type="submit" class="logout-button">Cerrar Sesión</button>
-    </form>
+    <!-- Enlace para volver a Tickets -->
+    <?php if ($tecnico){ ?>
+        <p><a href="paginaTecnico.php">Volver a Tickets</a></p>
+        <?php } else { ?>
+    <p><a href="DprincipalSesiones.php">Volver a Tickets</a></p>
+    <?php }; ?>
+</div>
+
+<!-- Botón de cerrar sesión -->
+<form action="cerrarSesion.php" method="post">
+    <button type="submit" class="logout-button">Cerrar Sesión</button>
+</form>
 
 </body>
 </html>

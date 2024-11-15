@@ -30,6 +30,8 @@ if (!$ticket) {
     die("No se pudo obtener la información del ticket");
 }
 
+$empleadoCreador = datosPerfil($ticket['id_usu']);
+$nombreEmpleadoCreador = $empleadoCreador['nombre'];
 // Aquí comienza el HTML
 ?>
 <!DOCTYPE html>
@@ -156,6 +158,10 @@ if (!$ticket) {
         <?php endif; ?>
         <div class="ticket-info">
             <p><span class="label">ID:</span> <span class="value"><?php echo htmlspecialchars($ticket['id']); ?></span></p>
+            <?php if (!empty($datosUsuario['foto_perfil'])): ?>
+            <img src="<?php echo htmlspecialchars($empleadoCreador['foto_perfil']); ?>" alt="Foto de Perfil" class="foto">
+        <?php endif; ?>
+            <p><span class="label">Creado por:</span> <a class="value" href="perfil.php?id=<?php echo htmlspecialchars($ticket['id_usu']); ?>"><?php echo htmlspecialchars($nombreEmpleadoCreador); ?></a></p>
             <p><span class="label">Asunto:</span> <span class="value"><?php echo htmlspecialchars($ticket['asunto']); ?></span></p>
             <p><span class="label">Estado:</span>
             <form action="detalleTicketTecnico.php?id=<?php echo $ticketId; ?>" method="POST">
@@ -184,6 +190,9 @@ if (!$ticket) {
             if ($mensajes) {
                 foreach ($mensajes as $mensaje) {
                     echo "<div class='message'>";
+                    if (!empty($datosUsuario['foto_perfil'])):?>
+                        <img src="<?php echo htmlspecialchars($empleadoCreador['foto_perfil']); ?>" alt="Foto de Perfil" class="foto">
+                    <?php endif; 
                     $nombre = letraUpper($mensaje['nombre']);
                     echo "<p>" . htmlspecialchars($nombre) . "</p>";
                     echo "<p>" . htmlspecialchars($mensaje['contenido']) . "</p>";

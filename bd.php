@@ -215,6 +215,31 @@ function crearTicket($id_usu, $descr, $asunto, $archivo = null)
 	}
 }
 
+function datosPerfil($id){
+	// Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+	// Consulta SQL para seleccionar los datos del usuario
+	$query = "SELECT * FROM usuarios WHERE id = :id";
+	//sentencia para ejecutarla de forma segura
+	$stmt = $bd->prepare($query);
+	//la consulta con el ID del usuario como parámetro
+	$stmt->execute([':id' => $id]);
+
+	// Devuelve el usuario en un array 
+	$ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+	// Verificar si hay resultados
+	if ($ticket) {
+		return $ticket;
+	} else {
+		return false; // 
+	}
+}
 
 function empleadoTickets($id_usu)
 {
@@ -243,6 +268,59 @@ function empleadoTickets($id_usu)
 
 	// Devuelve los tickets
 	return $tickets;
+}
+
+function actualizarFotoPerfil($id_usuario, $ruta_foto) {
+    // Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+
+	$query = "UPDATE usuarios SET foto_perfil = :foto_perfil WHERE id = :id";
+    
+    $stmt = $bd->prepare($query);
+    
+    $stmt->execute([
+        ':foto_perfil' => $ruta_foto,
+        ':id' => $id_usuario
+    ]);
+}
+
+function actualizarUsuario($id_usuario, $nombre, $direccion=null, $telefono=null, $departamento=null) {
+    // Incluyo los parámetros de conexión y creo el objeto PDO
+	// Conexión a la base de datos incluyendo los datos 
+	include "configuracion_bd.php";
+	$bd = new PDO(
+		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
+		$bd_config["usuario"],
+		$bd_config["clave"]
+	);
+        
+        // Consulta SQL para actualizar los datos del usuario
+        $query = "UPDATE usuarios SET nombre = :nombre, direccion = :direccion, telefono = :telefono, departamento = :departamento WHERE id = :id_usu";
+        // $telefono = (int)$telefono;
+        // Preparar la declaración
+        $stmt = $bd->prepare($query);
+        
+        // Ejecutar la consulta con los parámetros
+		$stmt->execute([
+			':id_usu' => $id_usuario,
+			':direccion' => $direccion,
+			':telefono' => $telefono,
+			':departamento' => $departamento,
+			':nombre' => $nombre
+		]);
+
+        // Verificar si se actualizó alguna fila
+        if ($stmt->rowCount() > 0) {
+            return true;
+        } else {
+            return  true;
+        }
 }
 
 function obtenerTicket($id)
@@ -450,21 +528,3 @@ function crearMensaje($tickedId, $remitenteId, $contenido)
 	}
 }
 
-function buscarProducto($codigoProducto)
-{
-	// Incluyo los parámetros de conexión y creo el objeto PDO
-	include "configuracion_bd.php";
-	$bd = new PDO(
-		"mysql:dbname=" . $bd_config["nombrebd"] . ";host=" . $bd_config["ip"],
-		$bd_config["usuario"],
-		$bd_config["clave"]
-	);
-
-	// Creo la sentencia SQL y ejecuto	
-	$ins = "select * from productos where codProd = $codigoProducto";
-	$resul = $bd->query($ins);
-	if (!$resul) {
-		return FALSE;
-	}
-	return $resul;
-}

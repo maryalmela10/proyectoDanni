@@ -125,10 +125,32 @@ FOREIGN KEY (remitente_id) REFERENCES usuarios(id) ON DELETE CASCADE;
 -- Agregar columna archivo_adjunto
 --
 ALTER TABLE tickets ADD COLUMN archivo_adjunto VARCHAR(255);
-
+--
+-- Agregar el token y la columna para activo y no activo
+--
 ALTER TABLE usuarios
 ADD COLUMN token_activacion VARCHAR(64),
 ADD COLUMN activo int(1) DEFAULT 0;
+--
+-- Agregar columna para telefono, dirección y departamento
+--
+ALTER TABLE usuarios
+ADD COLUMN telefono VARCHAR(9),
+ADD COLUMN direccion VARCHAR(100),
+ADD COLUMN departamento VARCHAR(50);
+
+-- Agregar la restricción CHECK para el teléfono
+ALTER TABLE usuarios
+ADD CONSTRAINT chk_telefono 
+CHECK (telefono REGEXP '^[0-9]{9}$');
+--
+-- Agregar columna para foto de perfil
+--
+ALTER TABLE usuarios ADD COLUMN foto_perfil VARCHAR(255) DEFAULT NULL;
+
+INSERT INTO `usuarios` (`id`, `nombre`, `email`, `contraseña`, `rol`, `token_activacion`, `activo`,`telefono`,`direccion`,`departamento`,`foto_perfil`) VALUES
+(11, 'Pablo', 'emple', '$2y$10$4oNTO8FUrkvKeaIxmUEUi.YaAZSyTK5k79Rs7UZZXlvNRqcoy0BY.', 0, NULL, 1, NULL, NULL, NULL, NULL),
+(12, 'Paty', 'tecni', '$2y$10$jAZFpJs2rgfPFGAEx1Ru2e1MNN1OwxBo9dAc7ZU9bA.FUOyURD9Fe', 1, NULL, 1, NULL, NULL, NULL, NULL);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
