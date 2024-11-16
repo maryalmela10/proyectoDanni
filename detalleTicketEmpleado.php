@@ -122,6 +122,35 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     .file-link:hover {
                         background-color: #45a049;
                     }
+
+                    .message-container {
+                        display: flex; /* Activa el diseño flexbox */
+                        align-items: center; /* Centra verticalmente los elementos */
+                        gap: 10px; /* Espacio entre la imagen y el texto */
+                        margin: 10px 0; /* Espaciado entre mensajes */
+                    }
+
+
+                    .foto {
+                        width: 40px; /* Ajusta el tamaño de la imagen */
+                        height: 40px;
+                        border-radius: 50%; /* Hace la imagen circular */
+                        object-fit: cover; /* Evita distorsión de la imagen */
+                        border: 2px solid #fff; /* Borde opcional */
+                    }
+
+                    .text-container {
+                        justify-content: center; 
+                        color: #333; /* Color del texto */
+                    }
+
+                    .rol{
+                        float: right;
+                        padding: 5px;
+                        border-radius: 25px;
+                        background-color: rgba(20, 4, 255, 0.5);
+                        font-size: 0.9em; /* Reduce ligeramente el tamaño del rol */
+                    }
                 </style>
             </head>
 
@@ -148,9 +177,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         $mensajes = obtenerMensajesTicket($ticketId); 
                         if ($mensajes) {
                             foreach ($mensajes as $mensaje) {
-                                echo "<div class='message'>";
+                                $rol = ($mensaje['rol']==0)? "Empleado" : "Técnico";
                                 $nombre = letraUpper($mensaje['nombre']);
-                                echo "<p>" . htmlspecialchars($nombre) . "</p>";
+                                echo "<div class='message'>";
+                                if (!empty($mensaje['foto_perfil'])){
+                                    echo '<p class="message-container">'.'<img src="' . htmlspecialchars($mensaje['foto_perfil']).'" alt="Foto de Perfil" class="foto">' . htmlspecialchars($nombre) . '</p><span class="rol">'.$rol.'</span>';
+                                } else {
+                                    echo "<p>". htmlspecialchars($nombre) . '<span class="rol">'.$rol.'</span></p>';
+                                }
                                 echo "<p>" . htmlspecialchars($mensaje['contenido']) . "</p>";
                                 echo "<p class='message-date'>" . htmlspecialchars($mensaje['fecha_envio']) . "</p>";
                                 echo "</div>";

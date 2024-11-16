@@ -1,0 +1,33 @@
+Usuario empleado
+correo:pablo@empresa.com 
+contraseña:1234
+
+Usuario técnico
+correo:paty@soporte.empresa.com 
+contraseña:1234
+
+Hicimos todas las funcionalidades básicas especificadas y de las ampliaciones logramos hacer:
+1. Tickets realistas
+2. Buscador de tickets
+3. Registro
+4. Contraseña cifrada
+5. Adjuntar archivos
+7. Perfiles
+8. Foto personal
+9. Notificación de correo
+
+Dentro de la carpeta del proyecto, tenemos la carpeta vendor. Debes moverla fuera de la carpeta del proyecto, 
+ya que el sistema la buscará allí para poder enviar los correos.
+
+La estructura del proyecto debe quedar de la siguiente forma:
+
+/carpetaDondeDescargasElProyecto
+    /proyectoDanni
+        -- ficheros del código
+    /vendor
+
+Estamos satisfechos con el resultado obtenido y esperamos que todo funcione según lo esperado. Muchas gracias.
+
+-Mary Almela
+-Pablo del Pozo
+-Patricia Maisincho

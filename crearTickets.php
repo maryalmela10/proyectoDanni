@@ -9,7 +9,7 @@ if (isset($_SESSION["logueado"]) && $_SESSION["logueado"] == "0") {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["asunto"]) && isset($_POST["descripcion"]) && !empty($_POST["asunto"]) && !empty($_POST["descripcion"])) {
             $id = (int)$_SESSION['id'];
-            $archivo_adjunto = null;
+            $archivo= null;
         if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] == 0) {
             $archivo_adjunto = $_FILES['archivo']['name'];
             $archivo_tmp = $_FILES['archivo']['tmp_name'];

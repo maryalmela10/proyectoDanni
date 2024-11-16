@@ -149,8 +149,8 @@ CHECK (telefono REGEXP '^[0-9]{9}$');
 ALTER TABLE usuarios ADD COLUMN foto_perfil VARCHAR(255) DEFAULT NULL;
 
 INSERT INTO `usuarios` (`id`, `nombre`, `email`, `contraseña`, `rol`, `token_activacion`, `activo`,`telefono`,`direccion`,`departamento`,`foto_perfil`) VALUES
-(11, 'Pablo', 'emple', '$2y$10$4oNTO8FUrkvKeaIxmUEUi.YaAZSyTK5k79Rs7UZZXlvNRqcoy0BY.', 0, NULL, 1, NULL, NULL, NULL, NULL),
-(12, 'Paty', 'tecni', '$2y$10$jAZFpJs2rgfPFGAEx1Ru2e1MNN1OwxBo9dAc7ZU9bA.FUOyURD9Fe', 1, NULL, 1, NULL, NULL, NULL, NULL);
+(11, 'Pablo', 'pablo@empresa.com', '$2y$10$4oNTO8FUrkvKeaIxmUEUi.YaAZSyTK5k79Rs7UZZXlvNRqcoy0BY.', 0, NULL, 1, NULL, NULL, 'Ventas', 'perfiles/6737b3521b486.jpg'),
+(12, 'Paty', 'paty@soporte.empresa.com', '$2y$10$jAZFpJs2rgfPFGAEx1Ru2e1MNN1OwxBo9dAc7ZU9bA.FUOyURD9Fe', 1, NULL, 1, NULL, NULL, 'Técnico', 'perfiles/673865c6c4e3a.jpg');
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

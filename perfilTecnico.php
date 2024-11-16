@@ -113,6 +113,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
             color: #003366;
             text-decoration: none;
         }
+        .foto {
+        width: 100px; 
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover; 
+        display: inline-block;
+        margin-right: 10px; 
+        vertical-align: middle;
+        }
     </style>
 </head>
 <body>

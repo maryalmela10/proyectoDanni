@@ -147,6 +147,75 @@ $nombreEmpleadoCreador = $empleadoCreador['nombre'];
         .file-link:hover {
             background-color: #45a049;
         }
+
+        
+
+        .label-container {
+            width: 150px;
+            display: flex;
+            align-items: center;
+            background-color: #f0f0f0; 
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+     
+        }
+
+        .foto{
+            width: 50px; 
+            height: 50px;
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 2px solid #fff; 
+        }
+
+        /* Estilo para la imagen de perfil */
+        .fotico {
+            width: 40px; 
+            height: 40px;
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 2px solid #fff; 
+        }
+
+        .value {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: 500;
+        }
+
+        .value:hover {
+            background-color: #f0f0f0; 
+        }
+
+        .message-container {
+        display: flex; /* Activa el diseño flexbox */
+        align-items: center; /* Centra verticalmente los elementos */
+        gap: 10px; /* Espacio entre la imagen y el texto */
+        margin: 10px 0; /* Espaciado entre mensajes */
+        }
+
+
+        .foto {
+            width: 40px; /* Ajusta el tamaño de la imagen */
+            height: 40px;
+            border-radius: 50%; /* Hace la imagen circular */
+            object-fit: cover; /* Evita distorsión de la imagen */
+            border: 2px solid #fff; /* Borde opcional */
+        }
+
+        .text-container {
+            justify-content: center; 
+            color: #333; /* Color del texto */
+        }
+
+        .rol{
+            float: right;
+            padding: 5px;
+            border-radius: 25px;
+            background-color: rgba(20, 4, 255, 0.5);
+            font-size: 0.9em; /* Reduce ligeramente el tamaño del rol */
+        }
     </style>
 </head>
 
@@ -157,11 +226,18 @@ $nombreEmpleadoCreador = $empleadoCreador['nombre'];
             <p><?php echo $mensaje; ?></p>
         <?php endif; ?>
         <div class="ticket-info">
-            <p><span class="label">ID:</span> <span class="value"><?php echo htmlspecialchars($ticket['id']); ?></span></p>
-            <?php if (!empty($datosUsuario['foto_perfil'])): ?>
-            <img src="<?php echo htmlspecialchars($empleadoCreador['foto_perfil']); ?>" alt="Foto de Perfil" class="foto">
-        <?php endif; ?>
-            <p><span class="label">Creado por:</span> <a class="value" href="perfil.php?id=<?php echo htmlspecialchars($ticket['id_usu']); ?>"><?php echo htmlspecialchars($nombreEmpleadoCreador); ?></a></p>
+            <p><span>ID:</span> <span class="value"><?php echo htmlspecialchars($ticket['id']); ?></span></p>
+            <p class="creador">
+                <span class="label">Creado por:</span>
+                <div class="label-container">
+                    <?php if (!empty($empleadoCreador['foto_perfil'])): ?>
+                        <img src="<?php echo htmlspecialchars($empleadoCreador['foto_perfil']); ?>" alt="Foto de Perfil" class="fotico">
+                    <?php endif; ?>
+                    <a class="value" href="perfil.php?id=<?php echo htmlspecialchars($ticket['id_usu']); ?>">
+                        <?php echo htmlspecialchars($nombreEmpleadoCreador); ?>
+                    </a>
+                </div>
+            </p>
             <p><span class="label">Asunto:</span> <span class="value"><?php echo htmlspecialchars($ticket['asunto']); ?></span></p>
             <p><span class="label">Estado:</span>
             <form action="detalleTicketTecnico.php?id=<?php echo $ticketId; ?>" method="POST">
@@ -186,15 +262,17 @@ $nombreEmpleadoCreador = $empleadoCreador['nombre'];
             <a href="enviar_mensaje.php?ticket_id=<?php echo $ticketId; ?>" class="button">Enviar Mensaje</a>
             <h3>Mensajes</h3>
             <?php
-            $mensajes = obtenerMensajesTicket($ticketId); // Asegúrate de implementar esta función
+            $mensajes = obtenerMensajesTicket($ticketId); 
             if ($mensajes) {
                 foreach ($mensajes as $mensaje) {
-                    echo "<div class='message'>";
-                    if (!empty($datosUsuario['foto_perfil'])):?>
-                        <img src="<?php echo htmlspecialchars($empleadoCreador['foto_perfil']); ?>" alt="Foto de Perfil" class="foto">
-                    <?php endif; 
+                    $rol = ($mensaje['rol']==0)? "Empleado" : "Técnico";
                     $nombre = letraUpper($mensaje['nombre']);
-                    echo "<p>" . htmlspecialchars($nombre) . "</p>";
+                    echo "<div class='message'>";
+                    if (!empty($mensaje['foto_perfil'])){
+                        echo '<p class="message-container">'.'<img src="' . htmlspecialchars($mensaje['foto_perfil']).'" alt="Foto de Perfil" class="foto">' . htmlspecialchars($nombre) . '</p><span class="rol">'.$rol.'</span>';
+                     } else {
+                        echo "<p>". htmlspecialchars($nombre) . '<span class="rol">'.$rol.'</span></p>';
+                     }
                     echo "<p>" . htmlspecialchars($mensaje['contenido']) . "</p>";
                     echo "<p class='message-date'>" . htmlspecialchars($mensaje['fecha_envio']) . "</p>";
                     echo "</div>";

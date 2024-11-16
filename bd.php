@@ -8,6 +8,7 @@ function enviarEmail($destino, $origen, $asunto, $cuerpo, $origenEtiqueta)
 {
 	$mail = new PHPMailer(true);
 	$mail->IsSMTP();
+	$mail->CharSet = 'UTF-8';
 	// cambiar a 0 para no ver mensajes de error
 	// Looking to send emails in production? Check out our Email API/SMTP product!
 	$mail->SMTPDebug  = 0;
@@ -131,6 +132,7 @@ function verificarEmailEmpresa($email)
 		return -1;
 	}
 }
+
 function comprobar_usuario($nombre, $clave)
 {
 	// Incluyo los parámetros de conexión y creo el objeto PDO
@@ -173,12 +175,13 @@ function crearTicket($id_usu, $descr, $asunto, $archivo = null)
 	);
 
 	// Verificar si el usuario existe
-	$checkUser = $bd->prepare("SELECT id FROM usuarios WHERE id = :id_usu");
+	$checkUser = $bd->prepare("SELECT * FROM usuarios WHERE id = :id_usu");
 	$checkUser->execute([':id_usu' => $id_usu]);
 	if ($checkUser->rowCount() === 0) {
 		// El usuario no existe
 		return FALSE;
 	}
+	$usuario = $checkUser->fetch(PDO::FETCH_ASSOC);
 
 	// Preparar la sentencia SQL para insertar el ticket
 	$sql = "INSERT INTO tickets (fecha_creacion, fecha_actualizacion, id_usu, descripcion, asunto, archivo_adjunto) VALUES (:fecha_creacion, :fecha_actualizacion, :id_usu, :descr, :asunto, :archivo)";
@@ -198,17 +201,22 @@ function crearTicket($id_usu, $descr, $asunto, $archivo = null)
 
 	if ($stmt->rowCount() === 1) {
 		$idTicket = $bd->lastInsertId();
-		// function enviarEmail($destino, $origen, $asunto, $cuerpo, $origenEtiqueta){
-		// foreach ($checkUser as $usu) {
-		// 	$cuerpo = "<p>Le informamos que ha abierto un nuevo ticket en nuestro sistema. A continuación, se detallan los datos del ticket:</p>";
-		// 	$cuerpo.= "<p>ID del Ticket: $idTicket</p>";
-		// 	$cuerpo.= "<p>Asunto: $asunto</p>";
-		// 	$cuerpo.= "<p>Fecha de Creación: $fecha_actual</p>";
-		// 	$cuerpo.= "<p>Descripción: $descr</p>";
-		// 	$cuerpo.= "<p>Nuestro equipo está revisando su solicitud y se pondrá en contacto con usted a la brevedad posible para brindarle asistencia.
-		// 					Si tiene alguna pregunta o necesita más información, no dude en utilizar el chat de la aplicación.</p>";
-		// 	enviarEmail($usu['email'], "soporte@empresa.com", "Creaste un nuevo ticket",$cuerpo,"no-replay");
-		// }
+		        // Enviar notificación al empleado
+				$destino = $usuario['email'];
+				$origen = "no-reply@ticketsystem.com";
+				$origenEtiqueta = "Sistema de Tickets";
+				$asuntoCorreo = "Ticket Creado: $asunto";
+				$cuerpoCorreo = "Hola " . htmlspecialchars($usuario['nombre']) . ",<br><br>"
+					. "Se ha creado un ticket con la siguiente información:<br>"
+					. "<b>Asunto:</b> " . htmlspecialchars($asunto) . "<br>"
+					. "<b>Descripción:</b> " . nl2br(htmlspecialchars($descr)) . "<br>"
+					. "<b>ID de Ticket:</b> " . $idTicket . "<br><br>"
+					. "Puedes hacer seguimiento de tu ticket en el sistema.<br><br>"
+					. "Atentamente,<br>"
+					. "El equipo de soporte.";
+		
+				enviarEmail($destino, $origen, $asuntoCorreo, $cuerpoCorreo, $origenEtiqueta);
+
 		return $idTicket; // Devuelve el ID del ticket insertado
 	} else {
 		return FALSE;
@@ -430,6 +438,21 @@ function actualizarEstadoTicket($idTicket, $nuevoEstado)
 		$bd_config["usuario"],
 		$bd_config["clave"]
 	);
+
+	// Obtener datos del ticket y del usuario asociado
+    $sqlTicket = "SELECT t.id, t.asunto, t.descripcion, u.email, u.nombre 
+                  FROM tickets t 
+                  JOIN usuarios u ON t.id_usu = u.id 
+                  WHERE t.id = :idTicket";
+    $stmtTicket = $bd->prepare($sqlTicket);
+    $stmtTicket->execute([':idTicket' => $idTicket]);
+
+    if ($stmtTicket->rowCount() === 0) {
+        return FALSE; // El ticket no existe
+    }
+
+	$ticket = $stmtTicket->fetch(PDO::FETCH_ASSOC);
+
 	// Consulta SQL para actualizar el estado del ticket
 	$query = "UPDATE tickets SET estado = :estado, fecha_actualizacion = NOW() WHERE id = :id";
 
@@ -442,6 +465,22 @@ function actualizarEstadoTicket($idTicket, $nuevoEstado)
 	]);
 	// Verificar si se actualizó alguna fila
 	if ($stmt->rowCount() > 0) {
+
+		  // Enviar notificación al empleado
+		  $destino = $ticket['email'];
+		  $origen = "no-reply@ticketsystem.com";
+		  $origenEtiqueta = "Sistema de Tickets";
+		  $asuntoCorreo = "Actualización de Estado: Ticket #" . $ticket['id'];
+		  $cuerpoCorreo = "Hola " . htmlspecialchars($ticket['nombre']) . ",<br><br>"
+			  . "El estado de tu ticket con ID #" . $ticket['id'] . " ha cambiado.<br><br>"
+			  . "<b>Asunto:</b> " . htmlspecialchars($ticket['asunto']) . "<br>"
+			  . "<b>Nuevo Estado:</b> " . htmlspecialchars($nuevoEstado) . "<br><br>"
+			  . "Puedes revisar los detalles en el sistema.<br><br>"
+			  . "Atentamente,<br>"
+			  . "El equipo de soporte.";
+  
+		  enviarEmail($destino, $origen, $asuntoCorreo, $cuerpoCorreo, $origenEtiqueta);
+
 		return true; // Actualización exitosa
 	} else {
 		return false; // No se encontró el ticket o no se realizaron cambios
@@ -461,7 +500,7 @@ function obtenerMensajesTicket($ticketId)
 	);
 	// Consulta SQL para traer los mensajes
 
-	$query = "SELECT m.*, u.nombre FROM mensajes m JOIN tickets t on m.ticket_id =t.id JOIN usuarios u ON m.remitente_id=u.id WHERE m.ticket_id=:id ORDER BY m.fecha_envio DESC";
+	$query = "SELECT m.*, u.nombre, u.foto_perfil, u.rol FROM mensajes m JOIN tickets t on m.ticket_id =t.id JOIN usuarios u ON m.remitente_id=u.id WHERE m.ticket_id=:id ORDER BY m.fecha_envio DESC";
 	// Preparar la sentencia
 	$stmt = $bd->prepare($query);
 

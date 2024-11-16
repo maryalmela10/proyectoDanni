@@ -142,12 +142,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
             text-decoration: none;
         }
         .foto {
-        width: 100px; /* Ajusta el tamaño según sea necesario */
+        width: 100px; 
         height: 100px;
         border-radius: 50%;
-        object-fit: cover; /* Asegura que la imagen no se deforme */
+        object-fit: cover; 
         display: inline-block;
-        margin-right: 10px; /* Espacio entre la imagen y el texto */
+        margin-right: 10px; 
         vertical-align: middle;
         }
     </style>
@@ -178,6 +178,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
                     <input type="hidden" name="accion" value="editar">
                     <button type="submit" class="edit-button">Modificar información</button>
                 </form>
+                <div class="content">
+                    <form method="post" action="subir_imagenPerfil.php" enctype="multipart/form-data">
+                    <label for="foto"><strong>Subir imagen de perfil:</strong></label>
+                    <input type="file" id="foto" name="foto" accept="image/*" required>
+                    <button type="submit" class="edit-button" >Subir Imagen</button>
+                    </form>
+                </div>
                 <?php }; ?>
         <?php else : ?>
                 <!-- Formulario de edición -->
@@ -203,13 +210,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['guardar'])) {
                     <a href="perfil.php" class="cancel-link">Cancelar</a>
                 </form>
         <?php endif; ?>
-    </div>
-    <div class="content">
-        <form method="post" action="subir_imagenPerfil.php" enctype="multipart/form-data">
-        <label for="foto"><strong>Subir imagen de perfil:</strong></label>
-        <input type="file" id="foto" name="foto" accept="image/*" required>
-        <button type="submit" class="edit-button" >Subir Imagen</button>
-        </form>
     </div>
 
     <!-- Enlace para volver a Tickets -->
