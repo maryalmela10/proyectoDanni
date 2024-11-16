@@ -6,6 +6,8 @@ Usuario técnico
 correo:paty@soporte.empresa.com 
 contraseña:1234
 
+Utiliza el fichero final.sql para crear la base de datos
+
 Hicimos todas las funcionalidades básicas especificadas y de las ampliaciones logramos hacer:
 1. Tickets realistas
 2. Buscador de tickets
